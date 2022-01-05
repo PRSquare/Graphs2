@@ -6,6 +6,16 @@
              xmlns:local="clr-namespace:Graphs2.Views"
              mc:Ignorable="d">
     <Grid>
-        
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="100"/>
+            <ColumnDefinition Width="100"/>
+        </Grid.ColumnDefinitions>
+        <TextBox Grid.Row="0" Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}"/>
+        <TextBox Grid.Row="1" Grid.Column="0" MaxLength="3" InputScope="Digits" Text="{Binding X, UpdateSourceTrigger=PropertyChanged}"/>
+        <TextBox Grid.Row="1" Grid.Column="1" MaxLength="3" InputScope="Digits" Text="{Binding Y, UpdateSourceTrigger=PropertyChanged}"/>
     </Grid>
 </UserControl>

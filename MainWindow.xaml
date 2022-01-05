@@ -13,16 +13,31 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
 
-        <views:MenuView/>
+        <views:MenuView Grid.Row="0" Grid.ColumnSpan="2"/>
 
-        <Canvas Grid.Row="1" Grid.Column="0" x:Name="GraphCanvas">
+        <Canvas Grid.Row="1" Grid.Column="0" x:Name="GraphCanvas" Width="400" Height="400">
             <views:GraphView/>
         </Canvas>
 
-        <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Vertical" Margin="450 5 0 0">
-            
+        <StackPanel Grid.Row="1" Grid.Column="1" Margin="10 10 0 0" Orientation="Vertical">
+            <StackPanel>
+                <StackPanel.Resources>
+                    <DataTemplate DataType="{x:Type viewmodels:VertexViewModel}">
+                        <views:VertexInfoView/>
+                    </DataTemplate>
+                    <DataTemplate DataType="{x:Type viewmodels:EdgeViewModel}">
+                        <views:EdgeInfoView/>
+                    </DataTemplate>
+                </StackPanel.Resources>
+                <ContentControl Content="{Binding CurrentObjectViewModel}"/>
+            </StackPanel>
             <Button Content="Test" Command="{Binding TestC}"/>
+            <views:ObjectesListView/>
         </StackPanel>
     </Grid>
 </Window>

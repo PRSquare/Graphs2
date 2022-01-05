@@ -34,6 +34,10 @@ namespace Graphs2.ViewModels
 
         private SolidColorBrush _edgeColor;
 
+        private bool _isDirected;
+        public bool IsDirected { get => _isDirected; set { _isDirected = value; OnPropertyChanged(nameof(IsDirected)); } }
+
+
         public SolidColorBrush EdgeColor
         {
             get => _edgeColor;
@@ -48,6 +52,7 @@ namespace Graphs2.ViewModels
         {
             _edge = edge;
             Name = _edge.Name;
+            IsDirected = _edge.IsDirected;
 
             StartPos = new PointViewModel();
             EndPos = new PointViewModel();

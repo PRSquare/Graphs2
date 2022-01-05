@@ -59,6 +59,7 @@
     <Compile Include="Commands\CommandBase.cs" />
     <Compile Include="Commands\TestCommand.cs" />
     <Compile Include="Models\Graph.cs" />
+    <Compile Include="Stores\NavigationStore.cs" />
     <Compile Include="Utils\GraphUtils.cs" />
     <Compile Include="ViewModels\BaseViewModel.cs" />
     <Compile Include="ViewModels\EdgeViewModel.cs" />
@@ -74,6 +75,9 @@
     </Compile>
     <Compile Include="Views\MenuView.xaml.cs">
       <DependentUpon>MenuView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ObjectesListView.xaml.cs">
+      <DependentUpon>ObjectesListView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\VertexInfoView.xaml.cs">
       <DependentUpon>VertexInfoView.xaml</DependentUpon>
@@ -99,6 +103,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\MenuView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\ObjectesListView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

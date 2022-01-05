@@ -19,6 +19,11 @@ namespace Graphs2
         public Graph MyGraph;
         public GraphViewModel GraphVM;
 
+        public App() 
+        {
+            
+        }
+
         protected override void OnStartup(StartupEventArgs e)
         {
             List<Vertex> vertList = new List<Vertex>();

@@ -1,5 +1,6 @@
 ﻿using Graphs2.Commands;
 using Graphs2.Models;
+using Graphs2.Stores;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -30,7 +31,21 @@ namespace Graphs2.ViewModels
             }
         }
 
-        public MainViewModel(Graph graph) 
+        private BaseViewModel _currentObjectViewModel;
+        public BaseViewModel CurrentObjectViewModel
+        {
+            get => _currentObjectViewModel;
+            set
+            {
+                _currentObjectViewModel = value;
+                OnPropertyChanged(nameof(CurrentObjectViewModel));
+            }
+        }
+        
+
+        private NavigationStore _objectInfo;
+
+        public MainViewModel(Graph graph)
         {
             GVM = new GraphViewModel(graph);
             TestC = new TestCommand();
@@ -38,7 +53,7 @@ namespace Graphs2.ViewModels
 
         public void testFunc(double x, double y)
         {
-            MessageBox.Show("Canvas clicked");
+            CurrentObjectViewModel = GVM.Vertexes[0];
         }
     }
 }
