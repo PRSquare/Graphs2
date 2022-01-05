@@ -1,0 +1,27 @@
+﻿<UserControl x:Class="Graphs2.Views.MenuView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Graphs2.Views"
+             mc:Ignorable="d">
+    <Menu Name ="Menu" Grid.Row="0">
+        <MenuItem Header="File">
+            <MenuItem Header="Open">
+                <MenuItem Header="Adjacenty Matrix"></MenuItem>
+                <MenuItem Header="Incidence Matrix"></MenuItem>
+                <MenuItem Header="Graph Code File"></MenuItem>
+            </MenuItem>
+            <MenuItem Header="Save">
+                <MenuItem Header="As Adjacenty Matrix"></MenuItem>
+                <!--<MenuItem Header="As Incidence Matrix"></MenuItem>-->
+                <MenuItem Header="As Graph Code File"></MenuItem>
+            </MenuItem>
+        </MenuItem>
+        <MenuItem Header="Задачи теории графов"/>
+        <MenuItem Header="?">
+            <MenuItem Header="О программе"></MenuItem>
+            <MenuItem Header="Об авторе"></MenuItem>
+        </MenuItem>
+    </Menu>
+</UserControl>
