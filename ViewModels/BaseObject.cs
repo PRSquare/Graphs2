@@ -1,18 +1,24 @@
-﻿using System;
+﻿using Graphs2.Commands;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Input;
 using System.Windows.Media;
 
 namespace Graphs2.ViewModels
 {
-    public class BaseObject : BaseViewModel
+    public abstract class BaseObject : BaseViewModel
     {
-        protected SolidColorBrush DefaultColor;
-        protected SolidColorBrush WhenSelectedColor;
+        protected SolidColorBrush defaultColor;
+        protected SolidColorBrush whenSelectedColor;
+
+        protected string whenSelectedText;
+        protected string whenNotSelectedText;
 
         public Action<BaseObject> OnSelection;
+        public Action OnUnselection;
 
         protected bool _isSelected;
 
@@ -28,6 +34,20 @@ namespace Graphs2.ViewModels
             }
         }
 
+        private string _contextMenuText;
+        public string ContextMenuText
+        {
+            get => _contextMenuText;
+            set
+            {
+                _contextMenuText = value;
+                OnPropertyChanged(nameof(ContextMenuText));
+            }
+        }
+
+        public ICommand SelectionChange { get; set; }
+        public ICommand DeleteFromGraph { get; set; }
+
         public BaseObject() 
         {
             ObjectColor = new SolidColorBrush(Colors.Black);
@@ -35,9 +55,18 @@ namespace Graphs2.ViewModels
             _isSelected = false;
 
             OnSelection = null;
+            OnUnselection = null;
 
-            DefaultColor = new SolidColorBrush(Colors.Black);
-            WhenSelectedColor = new SolidColorBrush(Colors.Red);
+            defaultColor = new SolidColorBrush(Colors.Black);
+            whenSelectedColor = new SolidColorBrush(Colors.Red);
+
+            SelectionChange = new ActionOnCommand(ChangeSelection);
+
+            whenSelectedText = "Снять выделение";
+            whenNotSelectedText = "Выделить";
+
+            ContextMenuText = whenNotSelectedText;
+            
         }
 
         public void EnableSelection()
@@ -46,14 +75,20 @@ namespace Graphs2.ViewModels
                 _isSelected = true;
             if (!(OnSelection is null))
                 OnSelection.Invoke(this);
-            ObjectColor = WhenSelectedColor;
+
+            ContextMenuText = whenSelectedText;
+            ObjectColor = whenSelectedColor;
         }
 
         public void DisableSelection()
         {
             if (_isSelected == true)
                 _isSelected = false;
-            ObjectColor = DefaultColor;
+            if (!(OnUnselection is null))
+                OnUnselection.Invoke();
+
+            ContextMenuText = whenNotSelectedText;
+            ObjectColor = defaultColor;
         }
 
         public void ChangeSelection()
@@ -64,5 +99,7 @@ namespace Graphs2.ViewModels
             else
                 DisableSelection();
         }
+
+        public abstract void ChangePosition(double x, double y);
     }
 }

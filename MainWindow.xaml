@@ -38,6 +38,8 @@
             </StackPanel>
             <Button Content="Test" Command="{Binding TestC}"/>
             <views:ObjectesListView/>
+            <Button Content="Change Position" Command="{Binding SetPositionToolCommand}"/>
+            <Button Content="Delete" Command="{Binding SetDeleteToolCommand}"/>
         </StackPanel>
     </Grid>
 </Window>

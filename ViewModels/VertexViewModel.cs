@@ -50,8 +50,16 @@ namespace Graphs2.ViewModels
             }
         }
 
-
-        public ICommand VertexSelectionChange { get; set; }
+        private Action<VertexViewModel> _onDelete;
+        public Action<VertexViewModel> OnDelete
+        {
+            get => _onDelete;
+            set
+            {
+                _onDelete = value;
+                DeleteFromGraph = new DeleteVertexActionOnCommand(OnDelete, this);
+            }
+        }
 
         public VertexViewModel(Vertex vert)
         {
@@ -61,11 +69,15 @@ namespace Graphs2.ViewModels
             X = _vert.X;
             Y = _vert.Y;
             ObjectColor = new SolidColorBrush(Colors.Yellow);
-            
-            VertexSelectionChange = new ActionOnCommand(ChangeSelection);
 
-            DefaultColor = new SolidColorBrush(Colors.Yellow);
-            WhenSelectedColor = new SolidColorBrush(Colors.Red);
+            defaultColor = new SolidColorBrush(Colors.Yellow);
+            whenSelectedColor = new SolidColorBrush(Colors.Red);
+        }
+
+        public override void ChangePosition(double x, double y)
+        {
+            X = x;
+            Y = y;
         }
     }
 }

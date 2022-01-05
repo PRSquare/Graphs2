@@ -17,6 +17,8 @@ namespace Graphs2.ViewModels
         public GraphViewModel GVM { get; set; }
 
         public ICommand TestC { get; set; }
+        public ICommand SetPositionToolCommand { get; set; }
+
         public CanvasClickedCommand CanvasClicked { get; set; }
 
         private Canvas _graphCanvas;
@@ -27,7 +29,6 @@ namespace Graphs2.ViewModels
             {
                 _graphCanvas = value;
                 CanvasClicked = new CanvasClickedCommand(GraphCanvas);
-                CanvasClicked.CurrentCommand = testFunc;
             }
         }
 
@@ -41,14 +42,17 @@ namespace Graphs2.ViewModels
                 OnPropertyChanged(nameof(CurrentObjectViewModel));
             }
         }
-        
-
-        private NavigationStore _objectInfo;
 
         public MainViewModel(Graph graph)
         {
             GVM = new GraphViewModel(graph);
             TestC = new TestCommand();
+            SetPositionToolCommand = new ActionOnCommand(SetPositionTool);
+        }
+
+        public void SetPositionTool()
+        {
+            CanvasClicked.ActiveCommand = GVM.ChangePosition;
         }
 
         public void testFunc(double x, double y)

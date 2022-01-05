@@ -36,12 +36,26 @@ namespace Graphs2.ViewModels
         public PointViewModel EndPos { get => _endPos; set { _endPos = value; OnPropertyChanged(nameof(EndPos)); } }
 
         private PointViewModel _midPos;
-        public PointViewModel MidPos { get => _midPos; set { _midPos = value;  OnPropertyChanged(nameof(MidPos)); } }
+        public PointViewModel MidPos { get => _midPos; set { _midPos = value; OnPropertyChanged(nameof(MidPos)); } }
 
-        public ICommand EdgeSelectionChange { get; set; }
+        private PointViewModel _textPos;
+        public PointViewModel TextPos { get => _textPos; set { _textPos = value; OnPropertyChanged(nameof(TextPos)); } }
 
+        public PointViewModel MidPosOffset;
+
+        private Action<EdgeViewModel> _onDelete;
+        public Action<EdgeViewModel> OnDelete 
+        {
+            get => _onDelete;
+            set
+            {
+                _onDelete = value;
+                DeleteFromGraph = new DeleteEdgeActionOnCommand(OnDelete, this);
+            }
+        }
 
         private bool _isDirected;
+
         public bool IsDirected { get => _isDirected; set { _isDirected = value; OnPropertyChanged(nameof(IsDirected)); } }
 
 
@@ -54,16 +68,17 @@ namespace Graphs2.ViewModels
             StartPos = new PointViewModel();
             EndPos = new PointViewModel();
             MidPos = new PointViewModel();
+            MidPosOffset = new PointViewModel();
+            TextPos = new PointViewModel();
 
             UpdateCords();
 
-            EdgeSelectionChange = new ActionOnCommand(ChangeSelection);
-
-            DefaultColor = new SolidColorBrush(Colors.Black);
-            WhenSelectedColor = new SolidColorBrush(Colors.Red);
+            defaultColor = new SolidColorBrush(Colors.Black);
+            whenSelectedColor = new SolidColorBrush(Colors.Red);
         }
 
-        public void UpdateCords() 
+
+        public void UpdateCords()
         {
             StartPos.X = _edge.RouteVert.X + 5;
             StartPos.Y = _edge.RouteVert.Y + 5;
@@ -71,8 +86,19 @@ namespace Graphs2.ViewModels
             EndPos.X = _edge.ConnectedVert.X + 5;
             EndPos.Y = _edge.ConnectedVert.Y + 5;
 
-            MidPos.X = (StartPos.X + EndPos.X) / 2.0;
-            MidPos.Y = (StartPos.Y + EndPos.Y) / 2.0;
+            MidPos.X = (StartPos.X + EndPos.X) / 2.0 + MidPosOffset.X;
+            MidPos.Y = (StartPos.Y + EndPos.Y) / 2.0 + MidPosOffset.Y;
+
+            // Central point of Bezier curve
+            TextPos.X = 0.25 * StartPos.X + 0.5 * MidPos.X + 0.25 * EndPos.X;
+            TextPos.Y = 0.25 * StartPos.Y + 0.5 * MidPos.Y + 0.25 * EndPos.Y;
+        }
+
+        public override void ChangePosition(double x, double y)
+        {
+            // Calculating point to positionate Bezier curve's mid point in coordinates 
+            MidPosOffset.X = (2 * x - 0.5 * (StartPos.X + EndPos.X)) - (StartPos.X + EndPos.X) / 2.0;
+            MidPosOffset.Y = (2 * y - 0.5 * (StartPos.Y + EndPos.Y)) - (StartPos.Y + EndPos.Y) / 2.0;
         }
     }
 }

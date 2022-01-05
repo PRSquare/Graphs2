@@ -16,7 +16,8 @@
                             <TextBlock Text="{Binding Name}" Margin="3 3 3 3">
                                 <TextBlock.ContextMenu>
                                     <ContextMenu>
-                                        <MenuItem Header="Выделить вершину" Command="{Binding VertexSelectionChange}"></MenuItem>
+                                        <MenuItem Header="{Binding ContextMenuText}" Command="{Binding SelectionChange}"></MenuItem>
+                                        <MenuItem Header="Удалить" Command="{Binding DeleteFromGraph}"/>
                                     </ContextMenu>
                                 </TextBlock.ContextMenu>
                             </TextBlock>
@@ -33,7 +34,8 @@
                             <TextBlock Text="{Binding Name}" Margin="3 3 3 3">
                                 <TextBlock.ContextMenu>
                                     <ContextMenu>
-                                        <MenuItem Header="Выделить ребро" Command="{Binding EdgeSelectionChange}"></MenuItem>
+                                        <MenuItem Header="{Binding ContextMenuText}" Command="{Binding SelectionChange}"></MenuItem>
+                                        <MenuItem Header="Удалить" Command="{Binding DeleteFromGraph}"/>
                                     </ContextMenu>
                                 </TextBlock.ContextMenu>
                             </TextBlock>

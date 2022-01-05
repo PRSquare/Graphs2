@@ -57,6 +57,8 @@
     </ApplicationDefinition>
     <Compile Include="Commands\CanvasClickedCommand.cs" />
     <Compile Include="Commands\CommandBase.cs" />
+    <Compile Include="Commands\DeleteEdgeActionOnCommand.cs" />
+    <Compile Include="Commands\DeleteVertexActionOnCommand.cs" />
     <Compile Include="Commands\TestCommand.cs" />
     <Compile Include="Commands\ActionOnCommand.cs" />
     <Compile Include="Models\Graph.cs" />

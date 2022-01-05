@@ -15,11 +15,17 @@
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
                     <Canvas>
-                        <TextBlock Text="{Binding Name}" Canvas.Left="{Binding MidPos.X}" Canvas.Top="{Binding MidPos.Y}"/>
+                        <TextBlock Text="{Binding Name}" Canvas.Left="{Binding TextPos.X}" Canvas.Top="{Binding TextPos.Y}"/>
                         <Path Stroke="{Binding ObjectColor}">
                             <Path.InputBindings>
-                                <MouseBinding Gesture="LeftClick" Command="{Binding EdgeSelectionChange}"/>
+                                <MouseBinding Gesture="LeftClick" Command="{Binding SelectionChange}"/>
                             </Path.InputBindings>
+                            <Path.ContextMenu>
+                                <ContextMenu>
+                                    <MenuItem Header="{Binding ContextMenuText}" Command="{Binding SelectionChange}"/>
+                                    <MenuItem Header="Удалить" Command="{Binding DeleteFromGraph}"/>
+                                </ContextMenu>
+                            </Path.ContextMenu>
                             <Path.Data>
                                 <PathGeometry>
                                     <PathFigure IsFilled="False" StartPoint="{Binding StartPos.P}">
@@ -39,12 +45,12 @@
                         <Ellipse Width="10" Height="10" Fill="{Binding ObjectColor}">
                             <Ellipse.ContextMenu>
                                 <ContextMenu>
-                                    <MenuItem Header="test1"></MenuItem>
-                                    <MenuItem Header="test2"></MenuItem>
+                                    <MenuItem Header="{Binding ContextMenuText}" Command="{Binding SelectionChange}"/>
+                                    <MenuItem Header="Удалить" Command="{Binding DeleteFromGraph}"/>
                                 </ContextMenu>
                             </Ellipse.ContextMenu>
                             <Ellipse.InputBindings>
-                                <MouseBinding Gesture="LeftClick" Command="{Binding VertexSelectionChange}"/>
+                                <MouseBinding Gesture="LeftClick" Command="{Binding SelectionChange}"/>
                             </Ellipse.InputBindings>
                             <Ellipse.RenderTransform>
                                 <TranslateTransform X="{Binding X}" Y="{Binding Y}"/>

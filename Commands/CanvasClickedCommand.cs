@@ -13,24 +13,30 @@ namespace Graphs2.Commands
     {
         public Canvas GraphCanvas;
 
-        public delegate void ActiveCommand(double x, double y);
-        public ActiveCommand CurrentCommand;
+        public Action<double, double> ActiveCommand;
 
         public CanvasClickedCommand(Canvas canv) 
         {
             GraphCanvas = canv;
-            CurrentCommand = null;
+            ActiveCommand = null;
         }
 
         public override void Execute(object parameter)
         {
             if (GraphCanvas is null)
                 throw new Exception("Canvas not created!");
-            if (CurrentCommand is null)
-                throw new Exception("Command not set!");
+            if (ActiveCommand is null)
+                return;
 
             Point pos = Mouse.GetPosition(GraphCanvas);
-            CurrentCommand(pos.X, pos.Y);
+            try
+            {
+                ActiveCommand(pos.X, pos.Y);
+            }
+            catch( Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
     }
 }
