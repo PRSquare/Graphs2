@@ -10,20 +10,20 @@ using System.Windows.Media;
 
 namespace Graphs2.ViewModels
 {
-    public class VertexViewModel : BaseViewModel
+    public class VertexViewModel : BaseObject
     {
         public Vertex _vert;
 
         private string _name;
-        public string Name 
-        { 
+        public string Name
+        {
             get => _name;
             set
             {
                 _name = value;
                 _vert.Name = Name;
                 OnPropertyChanged(nameof(Name));
-            } 
+            }
         }
 
         private double _x;
@@ -50,33 +50,22 @@ namespace Graphs2.ViewModels
             }
         }
 
-        private SolidColorBrush _vertexColor;
-        public SolidColorBrush VertexColor
+
+        public ICommand VertexSelectionChange { get; set; }
+
+        public VertexViewModel(Vertex vert)
         {
-            get => _vertexColor;
-            set
-            {
-                _vertexColor = value;
-                OnPropertyChanged(nameof(VertexColor));
-            }
-        }
 
-        // Temp
-
-        public ICommand cVPCommand { get; set; }
-
-        // ___________
-
-        public VertexViewModel(Vertex vert) 
-        {
-            _vert = vert;            
+            _vert = vert;
             Name = _vert.Name;
             X = _vert.X;
             Y = _vert.Y;
-            VertexColor = new SolidColorBrush(Colors.Yellow);
-            // Temp
-            cVPCommand = null;
-            // ___________
+            ObjectColor = new SolidColorBrush(Colors.Yellow);
+            
+            VertexSelectionChange = new ActionOnCommand(ChangeSelection);
+
+            DefaultColor = new SolidColorBrush(Colors.Yellow);
+            WhenSelectedColor = new SolidColorBrush(Colors.Red);
         }
     }
 }

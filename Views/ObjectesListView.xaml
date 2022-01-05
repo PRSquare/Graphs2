@@ -12,7 +12,15 @@
             <ItemsControl DataContext="{Binding GVM}" ItemsSource="{Binding Vertexes}">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <TextBlock Text="{Binding Name}"/>
+                        <Border BorderBrush="Black" BorderThickness="1" Margin="0 3 0 0">
+                            <TextBlock Text="{Binding Name}" Margin="3 3 3 3">
+                                <TextBlock.ContextMenu>
+                                    <ContextMenu>
+                                        <MenuItem Header="Выделить вершину" Command="{Binding VertexSelectionChange}"></MenuItem>
+                                    </ContextMenu>
+                                </TextBlock.ContextMenu>
+                            </TextBlock>
+                        </Border>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
@@ -21,7 +29,15 @@
             <ItemsControl DataContext="{Binding GVM}" ItemsSource="{Binding Edges}">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <TextBlock Text="{Binding Name}"/>
+                        <Border BorderBrush="Black" BorderThickness="1" Margin="0 3 0 0">
+                            <TextBlock Text="{Binding Name}" Margin="3 3 3 3">
+                                <TextBlock.ContextMenu>
+                                    <ContextMenu>
+                                        <MenuItem Header="Выделить ребро" Command="{Binding EdgeSelectionChange}"></MenuItem>
+                                    </ContextMenu>
+                                </TextBlock.ContextMenu>
+                            </TextBlock>
+                        </Border>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>

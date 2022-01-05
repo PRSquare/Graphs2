@@ -58,9 +58,11 @@
     <Compile Include="Commands\CanvasClickedCommand.cs" />
     <Compile Include="Commands\CommandBase.cs" />
     <Compile Include="Commands\TestCommand.cs" />
+    <Compile Include="Commands\ActionOnCommand.cs" />
     <Compile Include="Models\Graph.cs" />
     <Compile Include="Stores\NavigationStore.cs" />
     <Compile Include="Utils\GraphUtils.cs" />
+    <Compile Include="ViewModels\BaseObject.cs" />
     <Compile Include="ViewModels\BaseViewModel.cs" />
     <Compile Include="ViewModels\EdgeViewModel.cs" />
     <Compile Include="ViewModels\GraphViewModel.cs" />

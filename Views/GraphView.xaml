@@ -15,9 +15,11 @@
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
                     <Canvas>
-                        <TextBlock Text="{Binding Name}" Canvas.Left="{Binding MidPos.X}" Canvas.Top="{Binding MidPos.Y}">
-                        </TextBlock>
-                        <Path Stroke="{Binding EdgeColor}">
+                        <TextBlock Text="{Binding Name}" Canvas.Left="{Binding MidPos.X}" Canvas.Top="{Binding MidPos.Y}"/>
+                        <Path Stroke="{Binding ObjectColor}">
+                            <Path.InputBindings>
+                                <MouseBinding Gesture="LeftClick" Command="{Binding EdgeSelectionChange}"/>
+                            </Path.InputBindings>
                             <Path.Data>
                                 <PathGeometry>
                                     <PathFigure IsFilled="False" StartPoint="{Binding StartPos.P}">
@@ -34,7 +36,7 @@
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
                     <Canvas>
-                        <Ellipse Width="10" Height="10" Fill="{Binding VertexColor}">
+                        <Ellipse Width="10" Height="10" Fill="{Binding ObjectColor}">
                             <Ellipse.ContextMenu>
                                 <ContextMenu>
                                     <MenuItem Header="test1"></MenuItem>
@@ -42,7 +44,7 @@
                                 </ContextMenu>
                             </Ellipse.ContextMenu>
                             <Ellipse.InputBindings>
-                                <MouseBinding Gesture="LeftClick" Command="{Binding cVPCommand}" CommandParameter="{Binding}"/>
+                                <MouseBinding Gesture="LeftClick" Command="{Binding VertexSelectionChange}"/>
                             </Ellipse.InputBindings>
                             <Ellipse.RenderTransform>
                                 <TranslateTransform X="{Binding X}" Y="{Binding Y}"/>

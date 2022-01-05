@@ -17,6 +17,8 @@ namespace Graphs2.ViewModels
         public ObservableCollection<EdgeViewModel> Edges { get; set; }
 
         private Graph _graph;
+        
+
 
         public GraphViewModel(Graph graph) 
         {
@@ -28,13 +30,31 @@ namespace Graphs2.ViewModels
             foreach (var vertex in graph.Vertexes) 
             {
                 VertexViewModel vvm = new VertexViewModel(vertex);
+                vvm.OnSelection = ChangeSelected;
                 Vertexes.Add(vvm);
             }
             foreach( var edge in graph.Edges)
             {
                 EdgeViewModel evm = new EdgeViewModel(edge);
+                evm.OnSelection = ChangeSelected;
                 Edges.Add(evm);
             }
+        }
+
+        public void ChangeSelected(BaseObject obj) 
+        {
+            _disableOtherSelection(obj);
+
+        }
+
+        private void _disableOtherSelection(BaseObject obj) 
+        {
+            foreach (var vertex in Vertexes)
+                if( vertex != obj )
+                    vertex.DisableSelection();
+            foreach (var edge in Edges)
+                if(edge != obj)
+                    edge.DisableSelection();
         }
     }
 }

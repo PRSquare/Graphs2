@@ -1,14 +1,19 @@
-﻿using Graphs2.Models;
+﻿using Graphs2.Commands;
+using Graphs2.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Input;
 using System.Windows.Media;
 
 namespace Graphs2.ViewModels
 {
-    public class EdgeViewModel : BaseViewModel
+    /// <summary>
+    /// ViewModel class for edges
+    /// </summary>
+    public class EdgeViewModel : BaseObject
     {
         Edge _edge;
 
@@ -19,6 +24,7 @@ namespace Graphs2.ViewModels
             set
             {
                 _name = value;
+                _edge.Name = Name;
                 OnPropertyChanged(nameof(Name));
             }
         }
@@ -32,21 +38,12 @@ namespace Graphs2.ViewModels
         private PointViewModel _midPos;
         public PointViewModel MidPos { get => _midPos; set { _midPos = value;  OnPropertyChanged(nameof(MidPos)); } }
 
-        private SolidColorBrush _edgeColor;
+        public ICommand EdgeSelectionChange { get; set; }
+
 
         private bool _isDirected;
         public bool IsDirected { get => _isDirected; set { _isDirected = value; OnPropertyChanged(nameof(IsDirected)); } }
 
-
-        public SolidColorBrush EdgeColor
-        {
-            get => _edgeColor;
-            set
-            {
-                _edgeColor = value;
-                OnPropertyChanged(nameof(EdgeColor));
-            }
-        }
 
         public EdgeViewModel(Edge edge)
         {
@@ -60,7 +57,10 @@ namespace Graphs2.ViewModels
 
             UpdateCords();
 
-            EdgeColor = new SolidColorBrush(Colors.Black);
+            EdgeSelectionChange = new ActionOnCommand(ChangeSelection);
+
+            DefaultColor = new SolidColorBrush(Colors.Black);
+            WhenSelectedColor = new SolidColorBrush(Colors.Red);
         }
 
         public void UpdateCords() 
