@@ -17,7 +17,7 @@ namespace Graphs2.ViewModels
         protected string whenSelectedText;
         protected string whenNotSelectedText;
 
-        public Action<BaseObject> OnSelection;
+
         public Action OnUnselection;
 
         protected bool _isSelected;
@@ -54,7 +54,6 @@ namespace Graphs2.ViewModels
             
             _isSelected = false;
 
-            OnSelection = null;
             OnUnselection = null;
 
             defaultColor = new SolidColorBrush(Colors.Black);
@@ -69,16 +68,7 @@ namespace Graphs2.ViewModels
             
         }
 
-        public void EnableSelection()
-        {
-            if (_isSelected == false)
-                _isSelected = true;
-            if (!(OnSelection is null))
-                OnSelection.Invoke(this);
-
-            ContextMenuText = whenSelectedText;
-            ObjectColor = whenSelectedColor;
-        }
+        public abstract void EnableSelection();
 
         public void DisableSelection()
         {

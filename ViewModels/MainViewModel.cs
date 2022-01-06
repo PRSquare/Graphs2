@@ -18,6 +18,8 @@ namespace Graphs2.ViewModels
 
         public ICommand TestC { get; set; }
         public ICommand SetPositionToolCommand { get; set; }
+        public ICommand SetVertexCreationToolCommand { get; set; }
+        public ICommand SetEdgeCreationToolCommand { get; set; }
 
         public CanvasClickedCommand CanvasClicked { get; set; }
 
@@ -47,7 +49,26 @@ namespace Graphs2.ViewModels
         {
             GVM = new GraphViewModel(graph);
             TestC = new TestCommand();
+            SetVertexCreationToolCommand = new ActionOnCommand(SetVertexCreationTool);
             SetPositionToolCommand = new ActionOnCommand(SetPositionTool);
+            SetEdgeCreationToolCommand = new ActionOnCommand(SetEdgeCreationTool);
+
+            GVM.UpdateSelectionInfo = UpdateSelectionInfo;
+
+        }
+
+        public void SetVertexCreationTool()
+        {
+            CanvasClicked.ActiveCommand = GVM.CreateVertex;
+        }
+
+        public void SetEdgeCreationTool()
+        {
+            if( GVM.EdgeCreationToolSelected == false )
+            {
+                GVM.ResetSelectedVertexesBuffer();
+                GVM.EdgeCreationToolSelected = true;
+            }
         }
 
         public void SetPositionTool()
@@ -55,9 +76,16 @@ namespace Graphs2.ViewModels
             CanvasClicked.ActiveCommand = GVM.ChangePosition;
         }
 
-        public void testFunc(double x, double y)
+        public void UpdateSelectionInfo()
         {
-            CurrentObjectViewModel = GVM.Vertexes[0];
+            if (GVM.LastSelected == GraphViewModel.lastSelected.vertex)
+            {
+                CurrentObjectViewModel = GVM.SelectedVertexesBuffer[1];
+            }
+            else
+            {
+                CurrentObjectViewModel = GVM.SelectedEdgesBuffer[1];
+            }
         }
     }
 }

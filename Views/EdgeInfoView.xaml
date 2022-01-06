@@ -10,12 +10,14 @@
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="100"/>
+                <ColumnDefinition Width="100"/>
             </Grid.ColumnDefinitions>
-            <TextBox Grid.Row="0" Text="{Binding Name}"/>
-            <CheckBox Margin="0 20 0 0" IsChecked="{Binding IsDirected}" Content="Is directed"/>
+            <TextBox Grid.Row="0" Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}"/>
+            <CheckBox Grid.Row="1" IsChecked="{Binding IsDirected}" Content="Is directed"/>
         </Grid>
     </Grid>
 </UserControl>

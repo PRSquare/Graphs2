@@ -1,5 +1,6 @@
 ﻿using Graphs2.Commands;
 using Graphs2.Models;
+using Graphs2.Utils;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -13,67 +14,147 @@ namespace Graphs2.ViewModels
 {
     public class GraphViewModel : BaseViewModel
     {
-        public ObservableCollection<VertexViewModel> Vertexes { get; set; }
-        public ObservableCollection<EdgeViewModel> Edges { get; set; }
+        private ObservableCollection<VertexViewModel> _vertexes;
+        public ObservableCollection<VertexViewModel> Vertexes
+        {
+            get => _vertexes;
+            set
+            {
+                _vertexes = value;
+                OnPropertyChanged(nameof(Vertexes));
+            }
+        }
 
-        private BaseObject _selectedObject;
+        private ObservableCollection<EdgeViewModel> _edges;
+        public ObservableCollection<EdgeViewModel> Edges
+        {
+            get => _edges;
+            set
+            {
+                _edges = value;
+                OnPropertyChanged(nameof(Edges));
+            }
+        }
+
+        public BaseObject SelectedObject;
+        public VertexViewModel[] SelectedVertexesBuffer = new VertexViewModel[2];
+        public EdgeViewModel[] SelectedEdgesBuffer = new EdgeViewModel[2];
+        public enum lastSelected { vertex, edge };
+        public lastSelected LastSelected = lastSelected.vertex;
+        public bool EdgeCreationToolSelected = false;
+
+        public Action UpdateSelectionInfo;
 
         private Graph _graph;
 
-        public GraphViewModel(Graph graph) 
+        public GraphViewModel(Graph graph)
         {
             _graph = graph;
 
-            Vertexes = new ObservableCollection<VertexViewModel>();
-            Edges = new ObservableCollection<EdgeViewModel>();
+            Vertexes = _createVertexesCollection(_graph.Vertexes);
+            Edges = _createEdgesCollection(_graph.Edges);
 
-            foreach (var vertex in graph.Vertexes) 
+            ResetSelectedEdgesBuffer();
+            ResetSelectedVertexesBuffer();
+
+            SelectedObject = null;
+        }
+
+        private ObservableCollection<VertexViewModel> _createVertexesCollection(List<Vertex> vertexes)
+        {
+            ObservableCollection<VertexViewModel> retColl = new ObservableCollection<VertexViewModel>();
+            foreach (var vertex in vertexes)
             {
                 VertexViewModel vvm = new VertexViewModel(vertex);
                 vvm.OnSelection = ChangeSelected;
                 vvm.OnUnselection = DisableSelection;
                 vvm.OnDelete = DeleteVertex;
-                Vertexes.Add(vvm);
+                retColl.Add(vvm);
             }
-            foreach( var edge in graph.Edges)
+            return retColl;
+        }
+
+        private ObservableCollection<EdgeViewModel> _createEdgesCollection(List<Edge> edges)
+        {
+            ObservableCollection<EdgeViewModel> retColl = new ObservableCollection<EdgeViewModel>();
+            foreach (var edge in edges)
             {
                 EdgeViewModel evm = new EdgeViewModel(edge);
                 evm.OnSelection = ChangeSelected;
                 evm.OnUnselection = DisableSelection;
                 evm.OnDelete = DeleteEdge;
-                Edges.Add(evm);
+                retColl.Add(evm);
             }
-
-            _selectedObject = null;
+            return retColl;
         }
 
-        public void ChangeSelected(BaseObject obj) 
+        public void ResetSelectedVertexesBuffer()
+        {
+            SelectedVertexesBuffer = new VertexViewModel[2] { null, null };
+        }
+
+        public void ResetSelectedEdgesBuffer()
+        {
+            SelectedEdgesBuffer = new EdgeViewModel[2] { null, null };
+        }
+
+        private void _writeInBuffer( VertexViewModel vertex)
+        {
+            SelectedVertexesBuffer[0] = SelectedVertexesBuffer[1];
+            SelectedVertexesBuffer[1] = vertex;
+        }
+
+        private void _writeInBuffer(EdgeViewModel edge)
+        {
+            SelectedEdgesBuffer[0] = SelectedEdgesBuffer[1];
+            SelectedEdgesBuffer[1] = edge;
+        }
+
+        public void ChangeSelected(VertexViewModel obj)
         {
             _disableOtherSelection(obj);
-            _selectedObject = obj;
+            SelectedObject = obj;
+            _writeInBuffer(obj);
+            if(EdgeCreationToolSelected == true)
+            {
+                CreateEdge();
+            }
+            LastSelected = lastSelected.vertex;
+
+            UpdateSelectionInfo();
         }
 
-        public void DisableSelection() 
+        public void ChangeSelected(EdgeViewModel obj)
         {
-            _selectedObject = null;
+            _disableOtherSelection(obj);
+            SelectedObject = obj;
+            _writeInBuffer(obj);
+            LastSelected = lastSelected.edge;
+            
+            UpdateSelectionInfo();
         }
 
-        private void _disableOtherSelection(BaseObject obj) 
+        public void DisableSelection()
+        {
+            SelectedObject = null;
+        }
+
+        private void _disableOtherSelection(BaseObject obj)
         {
             foreach (var vertex in Vertexes)
-                if( vertex != obj )
+                if (vertex != obj)
                     vertex.DisableSelection();
             foreach (var edge in Edges)
-                if(edge != obj)
+                if (edge != obj)
                     edge.DisableSelection();
         }
 
-        public void ChangePosition( double x, double y ) 
+        public void ChangePosition(double x, double y)
         {
-            if (_selectedObject == null)
+            if (SelectedObject == null)
                 throw new Exception("Object not selected");
 
-            _selectedObject.ChangePosition(x, y);
+            SelectedObject.ChangePosition(x, y);
 
             foreach (var edge in Edges)
                 edge.UpdateCords();
@@ -81,12 +162,38 @@ namespace Graphs2.ViewModels
 
         public void DeleteVertex(VertexViewModel vertex)
         {
-            Vertexes.Remove(vertex);
+            _graph.RemoveVertex(vertex._vert);
+
+            Vertexes = _createVertexesCollection(_graph.Vertexes);
+            Edges = _createEdgesCollection(_graph.Edges);
         }
 
         public void DeleteEdge(EdgeViewModel edge)
         {
-            Edges.Remove(edge);
+            _graph.RemoveEdge(edge._edge);
+            Edges = _createEdgesCollection(_graph.Edges);
+        }
+
+        public void CreateVertex(double x, double y)
+        {
+            Vertex vertex = new Vertex(GraphUtils.GetNewVerteName());
+            vertex.X = x; vertex.Y = y;
+            while (_graph.AddVertex(vertex) == false)
+                vertex.Name = GraphUtils.GetNewVerteName();
+            Vertexes = _createVertexesCollection(_graph.Vertexes);
+        }
+
+        public void CreateEdge()
+        {
+            if(SelectedVertexesBuffer[0] != null && SelectedVertexesBuffer[1] != null)
+            {
+                Edge edge = new Edge(GraphUtils.GetNewEdgeName());
+                edge.RouteVert = SelectedVertexesBuffer[0]._vert;
+                edge.ConnectedVert = SelectedVertexesBuffer[1]._vert;
+                _graph.AddEdge(edge);
+                Edges = _createEdgesCollection(_graph.Edges);
+                EdgeCreationToolSelected = false;
+            }
         }
     }
 }

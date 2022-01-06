@@ -42,6 +42,7 @@
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
                     <Canvas>
+                        <TextBlock Text="{Binding Name}" Canvas.Left="{Binding TextPos.X}" Canvas.Top="{Binding TextPos.Y}"/>
                         <Ellipse Width="10" Height="10" Fill="{Binding ObjectColor}">
                             <Ellipse.ContextMenu>
                                 <ContextMenu>

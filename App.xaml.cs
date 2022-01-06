@@ -27,7 +27,7 @@ namespace Graphs2
         protected override void OnStartup(StartupEventArgs e)
         {
             List<Vertex> vertList = new List<Vertex>();
-            List<Edge> edgeList = new List<Edge>();
+            //List<Edge> edgeList = new List<Edge>();
 
             Vertex vert1 = new Vertex("vert1");
             Vertex vert2 = new Vertex("vert2");
@@ -36,19 +36,23 @@ namespace Graphs2
             Edge ed1 = new Edge();
             Edge ed2 = new Edge();
             Edge ed3 = new Edge();
+            Edge edCircle = new Edge();
 
             ed1.RouteVert = vert1; ed1.ConnectedVert = vert2;
             ed2.RouteVert = vert2; ed2.ConnectedVert = vert3;
             ed3.RouteVert = vert3; ed3.ConnectedVert = vert1;
+            edCircle.RouteVert = vert1; edCircle.ConnectedVert = vert1;
 
             ed1.ConnectVertexes();
             ed2.ConnectVertexes();
             ed3.ConnectVertexes();
+            edCircle.ConnectVertexes();
 
-            vertList.Add(vert1); vertList.Add(vert2); vertList.Add(vert3);
-            edgeList.Add(ed1); edgeList.Add(ed2); edgeList.Add(ed3);
+            vertList.Add(vert1); vertList.Add(vert2); vertList.Add(vert3); 
+            vertList.Add(vert4);
+            //edgeList.Add(ed1); edgeList.Add(ed2); edgeList.Add(ed3); edgeList.Add(edCircle);
 
-            MyGraph = new Graph(vertList, edgeList);
+            MyGraph = new Graph(vertList);
 
             GraphUtils.SetAutoVertexesPositions(MyGraph);
 

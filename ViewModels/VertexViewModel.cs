@@ -50,6 +50,9 @@ namespace Graphs2.ViewModels
             }
         }
 
+        private PointViewModel _textPos;
+        public PointViewModel TextPos { get => _textPos; set { _textPos = value; OnPropertyChanged(nameof(TextPos)); } }
+
         private Action<VertexViewModel> _onDelete;
         public Action<VertexViewModel> OnDelete
         {
@@ -61,14 +64,18 @@ namespace Graphs2.ViewModels
             }
         }
 
+        public Action<VertexViewModel> OnSelection;
+
         public VertexViewModel(Vertex vert)
         {
-
             _vert = vert;
             Name = _vert.Name;
             X = _vert.X;
             Y = _vert.Y;
+            TextPos = new PointViewModel(X, Y + 10);
             ObjectColor = new SolidColorBrush(Colors.Yellow);
+
+            OnSelection = null;
 
             defaultColor = new SolidColorBrush(Colors.Yellow);
             whenSelectedColor = new SolidColorBrush(Colors.Red);
@@ -78,6 +85,19 @@ namespace Graphs2.ViewModels
         {
             X = x;
             Y = y;
+
+            TextPos = new PointViewModel(X, Y + 10);
+        }
+
+        public override void EnableSelection()
+        {
+            if (_isSelected == false)
+                _isSelected = true;
+            if (!(OnSelection is null))
+                OnSelection.Invoke(this);
+
+            ContextMenuText = whenSelectedText;
+            ObjectColor = whenSelectedColor;
         }
     }
 }

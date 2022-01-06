@@ -15,7 +15,7 @@ namespace Graphs2.ViewModels
     /// </summary>
     public class EdgeViewModel : BaseObject
     {
-        Edge _edge;
+        public Edge _edge;
 
         private string _name;
         public string Name
@@ -42,6 +42,8 @@ namespace Graphs2.ViewModels
         public PointViewModel TextPos { get => _textPos; set { _textPos = value; OnPropertyChanged(nameof(TextPos)); } }
 
         public PointViewModel MidPosOffset;
+
+        public Action<EdgeViewModel> OnSelection;
 
         private Action<EdgeViewModel> _onDelete;
         public Action<EdgeViewModel> OnDelete 
@@ -72,6 +74,8 @@ namespace Graphs2.ViewModels
             TextPos = new PointViewModel();
 
             UpdateCords();
+            
+            OnSelection = null;
 
             defaultColor = new SolidColorBrush(Colors.Black);
             whenSelectedColor = new SolidColorBrush(Colors.Red);
@@ -85,10 +89,21 @@ namespace Graphs2.ViewModels
 
             EndPos.X = _edge.ConnectedVert.X + 5;
             EndPos.Y = _edge.ConnectedVert.Y + 5;
+            
+            if(_edge.RouteVert == _edge.ConnectedVert)
+            {
+                StartPos.X -= 5;
 
-            MidPos.X = (StartPos.X + EndPos.X) / 2.0 + MidPosOffset.X;
-            MidPos.Y = (StartPos.Y + EndPos.Y) / 2.0 + MidPosOffset.Y;
+                EndPos.X += 5;
 
+                MidPos.X = (StartPos.X + EndPos.X) / 2.0 + MidPosOffset.X;
+                MidPos.Y = StartPos.Y + 20 + MidPosOffset.Y;
+            }
+            else
+            {
+                MidPos.X = (StartPos.X + EndPos.X) / 2.0 + MidPosOffset.X;
+                MidPos.Y = (StartPos.Y + EndPos.Y) / 2.0 + MidPosOffset.Y;
+            }
             // Central point of Bezier curve
             TextPos.X = 0.25 * StartPos.X + 0.5 * MidPos.X + 0.25 * EndPos.X;
             TextPos.Y = 0.25 * StartPos.Y + 0.5 * MidPos.Y + 0.25 * EndPos.Y;
@@ -99,6 +114,17 @@ namespace Graphs2.ViewModels
             // Calculating point to positionate Bezier curve's mid point in coordinates 
             MidPosOffset.X = (2 * x - 0.5 * (StartPos.X + EndPos.X)) - (StartPos.X + EndPos.X) / 2.0;
             MidPosOffset.Y = (2 * y - 0.5 * (StartPos.Y + EndPos.Y)) - (StartPos.Y + EndPos.Y) / 2.0;
+        }
+
+        public override void EnableSelection()
+        {
+            if (_isSelected == false)
+                _isSelected = true;
+            if (!(OnSelection is null))
+                OnSelection.Invoke(this);
+
+            ContextMenuText = whenSelectedText;
+            ObjectColor = whenSelectedColor;
         }
     }
 }

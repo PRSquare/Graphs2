@@ -39,7 +39,8 @@
             <Button Content="Test" Command="{Binding TestC}"/>
             <views:ObjectesListView/>
             <Button Content="Change Position" Command="{Binding SetPositionToolCommand}"/>
-            <Button Content="Delete" Command="{Binding SetDeleteToolCommand}"/>
+            <Button Content="Create vertex" Command="{Binding SetVertexCreationToolCommand}"/>
+            <Button Content="Create edge" Command="{Binding SetEdgeCreationToolCommand}"/>
         </StackPanel>
     </Grid>
 </Window>

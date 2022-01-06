@@ -15,6 +15,8 @@ namespace Graphs2.Models
 
         public bool IsDirected;
 
+        public int EdgeNumber = 0;
+
         public Edge(string name = "Edge", int weight = 1) 
         {
             RouteVert = null;
