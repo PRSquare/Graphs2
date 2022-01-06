@@ -85,8 +85,16 @@ namespace Graphs2.Models
                 vert.Visited = false;
         }
 
-        // Labs
+        // ================================================= Labs ================================================================
 
+        // ==== 2 ====
+
+        /// <summary>
+        /// Breadth Fist Search
+        /// </summary>
+        /// <param name="start">Start vertex</param>
+        /// <param name="target">Vertex to find</param>
+        /// <returns>Count of edges to vert or -1 if there is no path</returns>
         public int BreadthFistSearch( Vertex start, Vertex target)
         {
             if (!Vertexes.Exists(x => x == start))
@@ -97,48 +105,51 @@ namespace Graphs2.Models
             if (start == target)
                 return 0;
 
-            bool found = false;
-
             Queue<Vertex> vertexes = new Queue<Vertex>();
-            int length = 0;
+            
+            int length = 0; // Length of path (passed edges count)
 
-            start.Visited = true;
-            vertexes.Enqueue(start);
-            while( vertexes.Count > 0 && !found)
+            start.Visited = true; // Start vertex is visited
+            vertexes.Enqueue(start); // Pushing start vertex in queue
+
+            while( vertexes.Count > 0)
             {
-                Vertex v = vertexes.Dequeue();
-                length++;
+                Vertex v = vertexes.Dequeue(); // Dequeueing vertex
+                length++; // Increasing path length
 
-                foreach( var ed in v.ConnectedEdges)
+                foreach( var ed in v.ConnectedEdges) // For each connected vertex
                 {
-                    if (!ed.ConnectedVert.Visited)
+                    if (!ed.ConnectedVert.Visited) // If vertex wasn't visited
                     {
-                        ed.ConnectedVert.Visited = true;
-                        vertexes.Enqueue(ed.ConnectedVert);
+                        ed.ConnectedVert.Visited = true; // Now it is visited
+                        vertexes.Enqueue(ed.ConnectedVert); // Pushing this vertex in queue
 
-                        if( ed.ConnectedVert == target)
+                        if( ed.ConnectedVert == target) // Vertex found!
                         {
-                            found = true;
-                            break;
+                            _clearVertexsesAfterSearch(); // Clearing vertexes visited state
+                            return length;
                         }
                     }
                 }
             }
 
-            _clearVertexsesAfterSearch();
-            
-            return length;
+            _clearVertexsesAfterSearch(); // Clearing vertexes visited state
+            return -1; // If vertex was not found returns -1
         }
 
-        private Vertex evristic(List<Vertex> verts)
+
+        // ==== 3 ====
+
+        private Vertex evristic(List<Vertex> verts) // Evtistic function to find more preferable node
         {
             if (verts.Count == 0)
                 throw new Exception("Emty vert list");
-            Vertex ret = verts[0];
-            int curConnected = ret.ConnectedEdges.Count;
+
+            Vertex ret = verts[0]; // take first Vertex (node)
+            int curConnected = ret.ConnectedEdges.Count; // count of connected edges (vertexes)
             foreach( var vert in verts)
             {
-                if( vert.ConnectedEdges.Count > curConnected )
+                if( vert.ConnectedEdges.Count > curConnected ) // If vertex has more connections then current take it as current
                 {
                     ret = vert;
                     curConnected = vert.ConnectedEdges.Count;
@@ -198,6 +209,10 @@ namespace Graphs2.Models
         }
 
 
+        // ==== 4 ====
+
+
+        // Class to store twos - Vert and Length for Dijksrtas algorythm
         class dijksrtasVert : IComparable
         {
             public Vertex Vert;
@@ -215,40 +230,46 @@ namespace Graphs2.Models
             }
         }
 
+
+        
         public Dictionary<Vertex, int> DijkstrasAlgorithm( Vertex start)
         {
             if (!Vertexes.Exists(x => x == start))
                 throw new Exception("Start point doesn't exist");
 
-            List<dijksrtasVert> dv = new List<dijksrtasVert>();
+            List<dijksrtasVert> dv = new List<dijksrtasVert>(); // Creating list of vertexes with markers (length)
             foreach (var vert in Vertexes)
             {
                 if(vert == start)
-                    dv.Add(new dijksrtasVert(vert, 0));
+                    dv.Add(new dijksrtasVert(vert, 0)); // If start vert length = 0
                 else
-                    dv.Add(new dijksrtasVert(vert, Int32.MaxValue));
+                    dv.Add(new dijksrtasVert(vert, Int32.MaxValue)); // Else it is set to infinity (maxint)
             }
 
 
 
-            while ( Vertexes.Exists( x => !x.Visited ) )
+            while ( Vertexes.Exists( x => !x.Visited ) ) // While not all vertexes were visited
             {
-                List<dijksrtasVert> leftedList = dv.FindAll(x => !x.Visited);
-                dijksrtasVert cur = leftedList.Min();
-                cur.Vert.Visited = true;
-                foreach( Edge ed in cur.Vert.ConnectedEdges)
+                List<dijksrtasVert> leftedList = dv.FindAll(x => !x.Visited); // List of not visited vertexes
+                dijksrtasVert cur = leftedList.Min(); // Take vertex with minimal length
+                cur.Vert.Visited = true; // It is visited now
+                foreach( Edge ed in cur.Vert.ConnectedEdges) // Finding path length to all connected vertexes 
                 {
                     Vertex analyseVert = ed.ConnectedVert;
-                    if (analyseVert.Visited == true)
+                    
+                    if (analyseVert.Visited == true) // Do not check visited vertexes
                         continue;
-                    var v = dv.Find(x => x.Vert == analyseVert);
-                    if (v.Length > ed.Weight + cur.Length)
+
+                    var v = dv.Find(x => x.Vert == analyseVert); // Take vertex from list of vertexes with markers (List<dijksrtasVert> dv)
+                    if (v.Length > ed.Weight + cur.Length) // If there is shorter path, rewriting length
                         v.Length = ed.Weight + cur.Length;
                 }
             }
             
 
-            _clearVertexsesAfterSearch();
+            _clearVertexsesAfterSearch(); // Clearing vertexes visited state
+
+            // Translating from List<dijksrtasVert> to Dictionary<Vertex, int>
 
             Dictionary<Vertex, int> retlist = new Dictionary<Vertex, int>();
             foreach( var a in dv )
