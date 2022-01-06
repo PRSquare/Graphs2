@@ -63,6 +63,8 @@ namespace Graphs2.Models
 
         public override bool Equals(object obj)
         {
+            if (obj is null)
+                return this is null;
             Edge edge = (Edge)obj;
             return RouteVert.Equals(edge.RouteVert) && ConnectedVert.Equals(edge.ConnectedVert) &&
                 Weight == edge.Weight && IsDirected == edge.IsDirected;
@@ -70,12 +72,14 @@ namespace Graphs2.Models
 
         public static bool operator ==(Edge ed1, Edge ed2) 
         {
+            if (ed1 is null)
+                return ed2 is null;
             return ed1.Equals(ed2);   
         }
 
         public static bool operator !=(Edge ed1, Edge ed2) 
         {
-            return !ed1.Equals(ed2);
+            return !(ed1 == ed2);
         }
 
 

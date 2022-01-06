@@ -23,6 +23,8 @@ namespace Graphs2.Models
 
         public string Name;
 
+        public bool Visited = false;
+
         public List<Edge> ConnectedEdges;
 
         public Vertex(string name)

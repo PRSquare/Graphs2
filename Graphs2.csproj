@@ -61,9 +61,11 @@
     <Compile Include="Commands\DeleteVertexActionOnCommand.cs" />
     <Compile Include="Commands\TestCommand.cs" />
     <Compile Include="Commands\ActionOnCommand.cs" />
+    <Compile Include="Models\AdjacentyMatrix.cs" />
     <Compile Include="Models\Graph.cs" />
     <Compile Include="Stores\NavigationStore.cs" />
     <Compile Include="Utils\GraphUtils.cs" />
+    <Compile Include="ViewModels\AdjacentyMatrixViewModel.cs" />
     <Compile Include="ViewModels\BaseObject.cs" />
     <Compile Include="ViewModels\BaseViewModel.cs" />
     <Compile Include="ViewModels\EdgeViewModel.cs" />

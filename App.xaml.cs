@@ -33,8 +33,8 @@ namespace Graphs2
             Vertex vert2 = new Vertex("vert2");
             Vertex vert3 = new Vertex("vert3");
 
-            Edge ed1 = new Edge();
-            Edge ed2 = new Edge();
+            Edge ed1 = new Edge("e", 5);
+            Edge ed2 = new Edge("w", 2);
             Edge ed3 = new Edge();
             Edge edCircle = new Edge();
             Edge sameEdge = new Edge();
@@ -58,7 +58,17 @@ namespace Graphs2
 
             MyGraph = new Graph(vertList);
 
+            AdjacentyMatrix mymat = new AdjacentyMatrix(MyGraph);
+
             GraphUtils.SetAutoVertexesPositions(MyGraph);
+
+            Dictionary<Vertex, int> test1 = MyGraph.DijkstrasAlgorithm(vert1);
+
+            string buffer = "";
+            foreach ( var d in test1)
+                buffer += d.Key.Name + " " + d.Value.ToString() + "\n";
+
+            MessageBox.Show($"{buffer}");
 
             MainWindow mainWindow = new MainWindow();
 
