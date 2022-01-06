@@ -49,7 +49,6 @@ namespace Graphs2
             edCircle.ConnectVertexes();
 
             vertList.Add(vert1); vertList.Add(vert2); vertList.Add(vert3); 
-            vertList.Add(vert4);
             //edgeList.Add(ed1); edgeList.Add(ed2); edgeList.Add(ed3); edgeList.Add(edCircle);
 
             MyGraph = new Graph(vertList);
