@@ -79,6 +79,12 @@ namespace Graphs2.ViewModels
             ObservableCollection<EdgeViewModel> retColl = new ObservableCollection<EdgeViewModel>();
             foreach (var edge in edges)
             {
+                /*Edge existingEdge = edges.Find(x => x.IsOposite(edge));
+                if(existingEdge != null)
+                {
+                    retColl.Find(x => x._edge == existingEdge).edges.Add(edge);
+                    continue;
+                }*/
                 EdgeViewModel evm = new EdgeViewModel(edge);
                 evm.OnSelection = ChangeSelected;
                 evm.OnUnselection = DisableSelection;

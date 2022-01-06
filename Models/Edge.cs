@@ -34,6 +34,18 @@ namespace Graphs2.Models
             RouteVert.ConnectedEdges.Add(this);
         }
 
+        /*public void OnDirectionChanged()
+        {
+            Edge newEdge = new Edge(Name, Weight);
+            newEdge.RouteVert = ConnectedVert;
+            newEdge.ConnectedVert = RouteVert;
+
+            if (IsDirected == true)
+                ConnectedVert.AddConnectedEdge(newEdge);
+            else
+                ConnectedVert.RemoveConnectedEdge(newEdge);
+        }*/
+
         public object Clone()
         {
             // ???
@@ -41,6 +53,12 @@ namespace Graphs2.Models
             retEdge.IsDirected = IsDirected;
             retEdge.ConnectedVert = ConnectedVert;
             return retEdge;
+        }
+
+        public bool IsOposite( Edge edge)
+        {
+            return RouteVert.Equals(edge.ConnectedVert) && ConnectedVert.Equals(edge.RouteVert) &&
+                Weight == edge.Weight && !IsDirected;
         }
 
         public override bool Equals(object obj)

@@ -16,6 +16,11 @@
                 <DataTemplate>
                     <Canvas>
                         <TextBlock Text="{Binding Name}" Canvas.Left="{Binding TextPos.X}" Canvas.Top="{Binding TextPos.Y}"/>
+                        <Rectangle Width="5" Height="5" Fill="Green">
+                            <Rectangle.RenderTransform>
+                                <TranslateTransform X="{Binding ArrowPos1.X}" Y="{Binding ArrowPos1.Y}"/>
+                            </Rectangle.RenderTransform>
+                        </Rectangle>
                         <Path Stroke="{Binding ObjectColor}">
                             <Path.InputBindings>
                                 <MouseBinding Gesture="LeftClick" Command="{Binding SelectionChange}"/>

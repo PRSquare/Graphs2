@@ -43,12 +43,30 @@ namespace Graphs2.Models
             return retVert;
         }
 
-        private void UpdateEdgeCords() 
+
+        /// <summary>
+        /// Adds new connection
+        /// </summary>
+        /// <param name="edge">Edge to add</param>
+        /// <returns>If edge already exists returns existing edge, else returns added edge</returns>
+        public Edge AddConnectedEdge( Edge edge)
         {
-            foreach( var edge in ConnectedEdges) 
+            Edge existing = ConnectedEdges.Find(x => x == edge);
+            if(existing == null)
             {
-                
+                ConnectedEdges.Add(edge);
+                return edge;
             }
+            return existing;
+        }
+        /// <summary>
+        /// Removes edge from connected edges
+        /// </summary>
+        /// <param name="edge">Edge to remove</param>
+        /// <returns>True if edge was removed, Else if not (edge doesn't exist)</returns>
+        public bool RemoveConnectedEdge( Edge edge)
+        {
+            return ConnectedEdges.Remove(edge);
         }
 
         public override bool Equals(object obj)

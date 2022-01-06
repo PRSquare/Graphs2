@@ -41,6 +41,13 @@ namespace Graphs2.ViewModels
         private PointViewModel _textPos;
         public PointViewModel TextPos { get => _textPos; set { _textPos = value; OnPropertyChanged(nameof(TextPos)); } }
 
+        private PointViewModel _arrowPos1;
+        public PointViewModel ArrowPos1 { get => _arrowPos1; set { _arrowPos1 = value; OnPropertyChanged(nameof(ArrowPos1)); } }
+
+        private PointViewModel _arrowPos2;
+        public PointViewModel ArrowPos2 { get => _arrowPos2; set { _arrowPos2 = value; OnPropertyChanged(nameof(ArrowPos2)); } }
+
+
         public PointViewModel MidPosOffset;
 
         public Action<EdgeViewModel> OnSelection;
@@ -58,13 +65,28 @@ namespace Graphs2.ViewModels
 
         private bool _isDirected;
 
-        public bool IsDirected { get => _isDirected; set { _isDirected = value; OnPropertyChanged(nameof(IsDirected)); } }
+        public bool IsDirected { 
+            get => _isDirected; 
+            set { _isDirected = value; _edge.IsDirected = IsDirected; OnPropertyChanged(nameof(IsDirected)); } 
+        }
 
+        private int _weight;
+        public int Weight
+        {
+            get => _weight;
+            set
+            {
+                _weight = value;
+                _edge.Weight = Weight;
+                OnPropertyChanged(nameof(Weight));
+            } 
+        }
 
         public EdgeViewModel(Edge edge)
         {
             _edge = edge;
             Name = _edge.Name;
+            Weight = _edge.Weight;
             IsDirected = _edge.IsDirected;
 
             StartPos = new PointViewModel();
@@ -72,6 +94,8 @@ namespace Graphs2.ViewModels
             MidPos = new PointViewModel();
             MidPosOffset = new PointViewModel();
             TextPos = new PointViewModel();
+            ArrowPos1 = new PointViewModel();
+            ArrowPos2 = new PointViewModel();
 
             UpdateCords();
             
@@ -80,7 +104,6 @@ namespace Graphs2.ViewModels
             defaultColor = new SolidColorBrush(Colors.Black);
             whenSelectedColor = new SolidColorBrush(Colors.Red);
         }
-
 
         public void UpdateCords()
         {
@@ -97,16 +120,24 @@ namespace Graphs2.ViewModels
                 EndPos.X += 5;
 
                 MidPos.X = (StartPos.X + EndPos.X) / 2.0 + MidPosOffset.X;
-                MidPos.Y = StartPos.Y + 20 + MidPosOffset.Y;
+                MidPos.Y = StartPos.Y + 20 + MidPosOffset.Y + 10*_edge.EdgeNumber;
             }
             else
             {
-                MidPos.X = (StartPos.X + EndPos.X) / 2.0 + MidPosOffset.X;
-                MidPos.Y = (StartPos.Y + EndPos.Y) / 2.0 + MidPosOffset.Y;
+                MidPos.X = (StartPos.X + EndPos.X) / 2.0 + MidPosOffset.X + 10 * _edge.EdgeNumber;
+                MidPos.Y = (StartPos.Y + EndPos.Y) / 2.0 + MidPosOffset.Y + 10 * _edge.EdgeNumber;
             }
             // Central point of Bezier curve
             TextPos.X = 0.25 * StartPos.X + 0.5 * MidPos.X + 0.25 * EndPos.X;
             TextPos.Y = 0.25 * StartPos.Y + 0.5 * MidPos.Y + 0.25 * EndPos.Y;
+
+            double xoffset = 0.9; double yoffset = 0.9;
+
+            ArrowPos1.X = (1 - xoffset) * (1 - xoffset) * StartPos.X + (1 - xoffset) * xoffset * 2 * MidPos.X + xoffset * xoffset * EndPos.X - 5;
+            ArrowPos1.Y = (1 - yoffset) * (1 - yoffset) * StartPos.Y + (1 - yoffset) * yoffset * 2 * MidPos.Y + yoffset * yoffset * EndPos.Y - 5;
+
+            ArrowPos2.X = 0.81 * StartPos.X + 0.81 * 2 * MidPos.X + 0.81 * EndPos.X;
+            ArrowPos2.Y = 0.81 * StartPos.Y + 0.81 * 2 * MidPos.Y + 0.81 * EndPos.Y;
         }
 
         public override void ChangePosition(double x, double y)

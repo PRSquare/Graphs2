@@ -13,6 +13,11 @@ namespace Graphs2.Models
 
         public Graph(List<Vertex> vertexes)
         {
+            Recreate(vertexes);
+        }
+
+        public void Recreate( List<Vertex> vertexes ) 
+        {
             Vertexes = new List<Vertex>();
             Edges = new List<Edge>();
             foreach (var vertex in vertexes)
@@ -41,7 +46,9 @@ namespace Graphs2.Models
         public bool AddEdge(Edge edge)
         {
             if (!Edges.Exists(x => x == edge))
-            { 
+            {
+                List<Edge> sameDirectedEdges = Edges.FindAll(x => { return x.RouteVert == edge.RouteVert && x.ConnectedVert == edge.ConnectedVert; });
+                edge.EdgeNumber = sameDirectedEdges.Count;
                 Edges.Add(edge);
                 return true;
             }

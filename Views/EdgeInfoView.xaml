@@ -17,7 +17,8 @@
                 <ColumnDefinition Width="100"/>
             </Grid.ColumnDefinitions>
             <TextBox Grid.Row="0" Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}"/>
-            <CheckBox Grid.Row="1" IsChecked="{Binding IsDirected}" Content="Is directed"/>
+            <TextBox Grid.Row="1" Grid.Column="0" InputScope="Digits"  Text="{Binding Weight, UpdateSourceTrigger=PropertyChanged}"/>
+            <CheckBox Grid.Row="1" Grid.Column="1" IsChecked="{Binding IsDirected}" Content="Is directed"/>
         </Grid>
     </Grid>
 </UserControl>
