@@ -18,7 +18,11 @@
                 <MenuItem Header="As Graph Code File"></MenuItem>
             </MenuItem>
         </MenuItem>
-        <MenuItem Header="Задачи теории графов"/>
+        <MenuItem Header="Задачи теории графов">
+            <MenuItem Header="Breadth Fist Search" Command="{Binding RunBreadthFirstSearchCommand}"/>
+            <MenuItem Header="Best Fist Search" Command="{Binding RunBestFirstSearchCommand}"/>
+            <MenuItem Header="Dijkstras Algorithm" Command="{Binding RunDijkstrasAlgorithmCommand}"/>
+        </MenuItem>
         <MenuItem Header="?">
             <MenuItem Header="О программе"></MenuItem>
             <MenuItem Header="Об авторе"></MenuItem>

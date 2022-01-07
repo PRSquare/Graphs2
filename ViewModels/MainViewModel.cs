@@ -21,6 +21,10 @@ namespace Graphs2.ViewModels
         public ICommand SetVertexCreationToolCommand { get; set; }
         public ICommand SetEdgeCreationToolCommand { get; set; }
 
+        public ICommand RunBreadthFirstSearchCommand { get; set; }
+        public ICommand RunBestFirstSearchCommand { get; set; }
+        public ICommand RunDijkstrasAlgorithmCommand { get; set; }
+
         public CanvasClickedCommand CanvasClicked { get; set; }
 
         private Canvas _graphCanvas;
@@ -48,10 +52,16 @@ namespace Graphs2.ViewModels
         public MainViewModel(Graph graph)
         {
             GVM = new GraphViewModel(graph);
-            TestC = new TestCommand();
+            
+            TestC = new ActionOnCommand(REMOVE_LATER_ShowGraphInfo);
+
             SetVertexCreationToolCommand = new ActionOnCommand(SetVertexCreationTool);
             SetPositionToolCommand = new ActionOnCommand(SetPositionTool);
             SetEdgeCreationToolCommand = new ActionOnCommand(SetEdgeCreationTool);
+
+            RunBreadthFirstSearchCommand = new ActionOnCommand(RunBreadthFirstSearch);
+            RunBestFirstSearchCommand = new ActionOnCommand(RunBestFirstSearch);
+            RunDijkstrasAlgorithmCommand = new ActionOnCommand(RunDijkstrasAlgorithm);
 
             GVM.UpdateSelectionInfo = UpdateSelectionInfo;
 
@@ -64,10 +74,14 @@ namespace Graphs2.ViewModels
 
         public void SetEdgeCreationTool()
         {
-            if( GVM.EdgeCreationToolSelected == false )
+            if (GVM.MultipleVertexTool == null)
             {
                 GVM.ResetSelectedVertexesBuffer();
-                GVM.EdgeCreationToolSelected = true;
+                GVM.MultipleVertexTool = GVM.CreateEdge;
+            }
+            else
+            {
+                MessageBox.Show("Some another tool is already in use");
             }
         }
 
@@ -86,6 +100,56 @@ namespace Graphs2.ViewModels
             {
                 CurrentObjectViewModel = GVM.SelectedEdgesBuffer[1];
             }
+        }
+
+        public void RunBreadthFirstSearch()
+        {
+            if (GVM.MultipleVertexTool == null)
+            {
+                MessageBox.Show("Select two vertexes please");
+                GVM.ResetSelectedVertexesBuffer();
+                GVM.MultipleVertexTool = GVM.RunBreadthFirstSearch;
+            }
+            else
+            {
+                MessageBox.Show("Some another tool is already in use");
+            }
+        }
+
+        public void RunBestFirstSearch()
+        {
+            if (GVM.MultipleVertexTool == null)
+            {
+                MessageBox.Show("Select two vertexes please");
+                GVM.ResetSelectedVertexesBuffer();
+                GVM.MultipleVertexTool = GVM.RunBestFirstSearch;
+            }
+            else
+            {
+                MessageBox.Show("Some another tool is already in use");
+            }
+        }
+
+        public void RunDijkstrasAlgorithm()
+        {
+            if (GVM.MultipleVertexTool == null)
+            {
+                MessageBox.Show("Select vertex please");
+                GVM.ResetSelectedVertexesBuffer();
+                GVM.MultipleVertexTool = GVM.RunDijkstrasAlgorithm;
+            }
+            else
+            {
+                MessageBox.Show("Some another tool is already in use");
+            }
+        }
+
+
+
+
+        public void REMOVE_LATER_ShowGraphInfo()
+        {
+            GVM.REMOVE_LATER_showMessageBoxWithGraphInfo();
         }
     }
 }

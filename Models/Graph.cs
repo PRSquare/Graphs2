@@ -73,8 +73,10 @@ namespace Graphs2.Models
             List<Edge> retList = new List<Edge>();
             foreach (var edge in edges)
             {
-                if (Vertexes.Exists(x => x == edge.RouteVert ) && Vertexes.Exists(x => x == edge.ConnectedVert))
+                if (Vertexes.Exists(x => x == edge.RouteVert) && Vertexes.Exists(x => x == edge.ConnectedVert))
                     retList.Add(edge);
+                else
+                    edge.RouteVert?.RemoveConnectedEdge(edge);
             }
             return retList;
         }
@@ -257,6 +259,10 @@ namespace Graphs2.Models
             if (!Vertexes.Exists(x => x == start))
                 throw new Exception("Start point doesn't exist");
 
+            foreach (var edge in Edges)
+                if (edge.Weight < 0)
+                    throw new Exception($"{edge.Name} has negative weight");
+
             List<dijksrtasVert> dv = new List<dijksrtasVert>(); // Creating list of vertexes with markers (length)
             foreach (var vert in Vertexes)
             {
@@ -293,9 +299,8 @@ namespace Graphs2.Models
 
             Dictionary<Vertex, int> retlist = new Dictionary<Vertex, int>();
             foreach( var a in dv )
-            {
-                retlist.Add(a.Vert, a.Length);
-            }
+                if(a.Length != Int32.MaxValue)
+                    retlist.Add(a.Vert, a.Length);
             return retlist;
         }
     }

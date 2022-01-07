@@ -25,6 +25,7 @@
         </Canvas>
 
         <StackPanel Grid.Row="1" Grid.Column="1" Margin="10 10 0 0" Orientation="Vertical">
+            <Button Content="Test" Command="{Binding TestC}"/>
             <StackPanel>
                 <StackPanel.Resources>
                     <DataTemplate DataType="{x:Type viewmodels:VertexViewModel}">
@@ -36,8 +37,14 @@
                 </StackPanel.Resources>
                 <ContentControl Content="{Binding CurrentObjectViewModel}"/>
             </StackPanel>
-            <Button Content="Test" Command="{Binding TestC}"/>
-            <views:ObjectesListView/>
+            <StackPanel Orientation="Horizontal">
+                <ScrollViewer Height="200" VerticalScrollBarVisibility="Auto" Width="Auto">
+                    <views:ObjectesListView/>
+                </ScrollViewer>
+                <Grid>
+                    <TextBlock>There will be matrix</TextBlock>
+                </Grid>
+            </StackPanel>
             <Button Content="Change Position" Command="{Binding SetPositionToolCommand}"/>
             <Button Content="Create vertex" Command="{Binding SetVertexCreationToolCommand}"/>
             <Button Content="Create edge" Command="{Binding SetEdgeCreationToolCommand}"/>

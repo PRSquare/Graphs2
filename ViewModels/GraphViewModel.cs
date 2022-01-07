@@ -42,9 +42,10 @@ namespace Graphs2.ViewModels
         public EdgeViewModel[] SelectedEdgesBuffer = new EdgeViewModel[2];
         public enum lastSelected { vertex, edge };
         public lastSelected LastSelected = lastSelected.vertex;
-        public bool EdgeCreationToolSelected = false;
 
         public Action UpdateSelectionInfo;
+
+        public Action MultipleVertexTool = null;
 
         private Graph _graph;
 
@@ -122,9 +123,9 @@ namespace Graphs2.ViewModels
             _disableOtherSelection(obj);
             SelectedObject = obj;
             _writeInBuffer(obj);
-            if(EdgeCreationToolSelected == true)
+            if(MultipleVertexTool != null)
             {
-                CreateEdge();
+                MultipleVertexTool();
             }
             LastSelected = lastSelected.vertex;
 
@@ -170,7 +171,7 @@ namespace Graphs2.ViewModels
         }
 
         // TEMP!!!!
-        private void REMOVE_LATER_showMessageBoxWithGraphInfo()
+        public void REMOVE_LATER_showMessageBoxWithGraphInfo()
         {
             string buffer = "";
             foreach (var vert in _graph.Vertexes)
@@ -217,7 +218,49 @@ namespace Graphs2.ViewModels
                 edge.ConnectVertexes();
                 _graph.AddEdge(edge);
                 Edges = _createEdgesCollection(_graph.Edges);
-                EdgeCreationToolSelected = false;
+                MultipleVertexTool = null;
+            }
+        }
+
+        public void RunBreadthFirstSearch()
+        {
+            if(SelectedVertexesBuffer[0] != null && SelectedVertexesBuffer[1] != null)
+            {
+                int length = _graph.BreadthFistSearch(SelectedVertexesBuffer[0]._vert, SelectedVertexesBuffer[1]._vert);
+                if (length == -1)
+                    MessageBox.Show($"There is no path between {SelectedVertexesBuffer[0].Name} and {SelectedVertexesBuffer[1].Name}");
+                else
+                    MessageBox.Show($"Path length between {SelectedVertexesBuffer[0].Name} and {SelectedVertexesBuffer[1].Name} equals {length}");
+                
+                MultipleVertexTool = null;
+            }
+        } 
+
+        public void RunBestFirstSearch()
+        {
+            if (SelectedVertexesBuffer[0] != null && SelectedVertexesBuffer[1] != null)
+            {
+                int length = _graph.BestFirstSearch(SelectedVertexesBuffer[0]._vert, SelectedVertexesBuffer[1]._vert);
+                if (length == -1)
+                    MessageBox.Show($"There is no path between {SelectedVertexesBuffer[0].Name} and {SelectedVertexesBuffer[1].Name}");
+                else
+                    MessageBox.Show($"Path length between {SelectedVertexesBuffer[0].Name} and {SelectedVertexesBuffer[1].Name} equals {length}");
+
+                MultipleVertexTool = null;
+            }
+        }
+
+        public void RunDijkstrasAlgorithm()
+        {
+            if (SelectedVertexesBuffer[1] != null)
+            {
+                Dictionary<Vertex, int> result = _graph.DijkstrasAlgorithm(SelectedVertexesBuffer[1]._vert);
+                string buffer = "Path lengths: \n";
+                foreach (var d in result)
+                    buffer += d.Key.Name + ": " + d.Value.ToString() + "\n";
+                MessageBox.Show(buffer);
+
+                MultipleVertexTool = null;
             }
         }
     }
