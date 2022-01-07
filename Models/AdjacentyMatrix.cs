@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Graphs2.Utils;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,24 +9,62 @@ namespace Graphs2.Models
 {
     class AdjacentyMatrix
     {
-        public Matrix Mat;
+        private Matrix<Edge> Mat;
+        public bool IsInaccurate = false;
+        Graph _graph;
 
         public AdjacentyMatrix(Graph graph)
         {
-            uint size = (uint)graph.Vertexes.Count;
-            Mat = new Matrix(size, size);
+            _graph = graph;
+            int size = graph.Vertexes.Count;
+            Mat = new Matrix<Edge>(size, size);
             Vertex[] vertexes = graph.Vertexes.ToArray();
             for (int i = 0; i < size; ++i)
             {
                 for(int j = 0; j < size; ++j)
                 {
-                    Edge connected = vertexes[i].ConnectedEdges.Find(x => x.ConnectedVert == vertexes[j]);
-                    if (connected != null)
-                        Mat.Values[i][j] = connected.Weight;
+                    List<Edge> connected = vertexes[i].ConnectedEdges.FindAll(x => x.ConnectedVert == vertexes[j]);
+                    if (connected?.Count > 1)
+                        IsInaccurate = true;
+
+                    if (connected?.Count != 0)
+                        Mat.Values[i][j] = connected.First();
                     else
-                        Mat.Values[i][j] = 0;
+                        Mat.Values[i][j] = null;
                 }
             }
         }
+        
+        public void SetValue(int weight, int i, int j)
+        {
+            if (i >= Mat.Width || j >= Mat.Height || i < 0 || j < 0)
+                throw new IndexOutOfRangeException();
+
+            if(weight != 0)
+            {
+                if( !(Mat.Values[i][j] is null))
+                {
+                    Mat.Values[i][j].Weight = weight;
+                }
+                else
+                {
+                    Edge newEdge = new Edge(GraphUtils.GetNewEdgeName(), weight);
+                    Vertex[] vertArray = _graph.Vertexes.ToArray();
+                    newEdge.RouteVert = vertArray[i];
+                    newEdge.ConnectedVert = vertArray[j];
+                    if (_graph.AddEdge(newEdge))
+                        newEdge.ConnectVertexes();
+                }
+            }
+            else
+            {
+                Vertex[] vertArray = _graph.Vertexes.ToArray();
+                Edge edge = vertArray[i].ConnectedEdges[0];
+                _graph.RemoveEdge(edge);
+            }
+        }
+
+        public Edge At(int i, int j) => Mat.Values[i][j];
+        public int Size => Mat.Width;
     }
 }

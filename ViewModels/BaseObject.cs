@@ -77,6 +77,11 @@ namespace Graphs2.ViewModels
             if (!(OnUnselection is null))
                 OnUnselection.Invoke();
 
+            setDefaultState();
+        }
+
+        public void setDefaultState()
+        {
             ContextMenuText = whenNotSelectedText;
             ObjectColor = defaultColor;
         }

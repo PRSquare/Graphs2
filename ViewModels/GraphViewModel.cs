@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
 
 namespace Graphs2.ViewModels
 {
@@ -98,6 +99,7 @@ namespace Graphs2.ViewModels
 
         public void ResetSelectedVertexesBuffer()
         {
+            DisableSelection();
             SelectedVertexesBuffer = new VertexViewModel[2] { null, null };
         }
 
@@ -144,6 +146,7 @@ namespace Graphs2.ViewModels
 
         public void DisableSelection()
         {
+            SelectedObject?.setDefaultState();
             SelectedObject = null;
         }
 
@@ -224,14 +227,31 @@ namespace Graphs2.ViewModels
 
         public void RunBreadthFirstSearch()
         {
-            if(SelectedVertexesBuffer[0] != null && SelectedVertexesBuffer[1] != null)
+            if (SelectedVertexesBuffer[0] != null && SelectedVertexesBuffer[1] != null)
             {
-                int length = _graph.BreadthFistSearch(SelectedVertexesBuffer[0]._vert, SelectedVertexesBuffer[1]._vert);
-                if (length == -1)
+                DisableSelection();
+                List<Vertex> result = _graph.BreadthFristSearch(SelectedVertexesBuffer[0]._vert, SelectedVertexesBuffer[1]._vert);
+                if (result == null)
                     MessageBox.Show($"There is no path between {SelectedVertexesBuffer[0].Name} and {SelectedVertexesBuffer[1].Name}");
                 else
-                    MessageBox.Show($"Path length between {SelectedVertexesBuffer[0].Name} and {SelectedVertexesBuffer[1].Name} equals {length}");
-                
+                {
+                    foreach (var vert in Vertexes)
+                    {
+                        if (result.Exists(x => x == vert._vert))
+                            vert.ObjectColor = new SolidColorBrush(Colors.Green);
+                    }
+                    for (int i = 0; i < result.Count - 1; ++i)
+                    {
+                        Edge fEdge = result[i + 1].ConnectedEdges.Find(x => x.ConnectedVert == result[i]);
+                        foreach (var ed in Edges)
+                        {
+                            if (ed._edge == fEdge)
+                                ed.ObjectColor = new SolidColorBrush(Colors.Green);
+                        }
+                    }
+                    MessageBox.Show($"Path length between {SelectedVertexesBuffer[0].Name} and {SelectedVertexesBuffer[1].Name} equals {result.Count - 1}");
+                }
+
                 MultipleVertexTool = null;
             }
         } 
@@ -240,12 +260,28 @@ namespace Graphs2.ViewModels
         {
             if (SelectedVertexesBuffer[0] != null && SelectedVertexesBuffer[1] != null)
             {
-                int length = _graph.BestFirstSearch(SelectedVertexesBuffer[0]._vert, SelectedVertexesBuffer[1]._vert);
-                if (length == -1)
+                DisableSelection();
+                List<Vertex> result = _graph.BestFirstSearch(SelectedVertexesBuffer[0]._vert, SelectedVertexesBuffer[1]._vert);
+                if (result == null)
                     MessageBox.Show($"There is no path between {SelectedVertexesBuffer[0].Name} and {SelectedVertexesBuffer[1].Name}");
                 else
-                    MessageBox.Show($"Path length between {SelectedVertexesBuffer[0].Name} and {SelectedVertexesBuffer[1].Name} equals {length}");
-
+                {
+                    foreach (var vert in Vertexes)
+                    {
+                        if (result.Exists(x => x == vert._vert))
+                            vert.ObjectColor = new SolidColorBrush(Colors.Green);
+                    }
+                    for (int i = 0; i < result.Count - 1; ++i)
+                    {
+                        Edge fEdge = result[i + 1].ConnectedEdges.Find(x => x.ConnectedVert == result[i]);
+                        foreach (var ed in Edges)
+                        {
+                            if (ed._edge == fEdge)
+                                ed.ObjectColor = new SolidColorBrush(Colors.Green);
+                        }
+                    }
+                    MessageBox.Show($"Path length between {SelectedVertexesBuffer[0].Name} and {SelectedVertexesBuffer[1].Name} equals {result.Count - 1}");
+                }
                 MultipleVertexTool = null;
             }
         }
@@ -254,6 +290,7 @@ namespace Graphs2.ViewModels
         {
             if (SelectedVertexesBuffer[1] != null)
             {
+                DisableSelection();
                 Dictionary<Vertex, int> result = _graph.DijkstrasAlgorithm(SelectedVertexesBuffer[1]._vert);
                 string buffer = "Path lengths: \n";
                 foreach (var d in result)

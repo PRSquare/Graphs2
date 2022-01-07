@@ -72,7 +72,7 @@ namespace Graphs2
 
             MainWindow mainWindow = new MainWindow();
 
-            MainViewModel MVM = new MainViewModel(MyGraph);
+            MainViewModel MVM = new MainViewModel(MyGraph, mymat);
             MVM.GraphCanvas = mainWindow.GraphCanvas;
 
             mainWindow.DataContext = MVM;

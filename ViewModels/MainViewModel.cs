@@ -15,6 +15,7 @@ namespace Graphs2.ViewModels
     class MainViewModel : BaseViewModel
     {
         public GraphViewModel GVM { get; set; }
+        public AdjacentyMatrixViewModel AMVM { get; set; }
 
         public ICommand TestC { get; set; }
         public ICommand SetPositionToolCommand { get; set; }
@@ -49,9 +50,10 @@ namespace Graphs2.ViewModels
             }
         }
 
-        public MainViewModel(Graph graph)
+        public MainViewModel(Graph graph, AdjacentyMatrix adjMat)
         {
             GVM = new GraphViewModel(graph);
+            AMVM = new AdjacentyMatrixViewModel(adjMat);
             
             TestC = new ActionOnCommand(REMOVE_LATER_ShowGraphInfo);
 

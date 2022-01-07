@@ -6,17 +6,19 @@ using System.Threading.Tasks;
 
 namespace Graphs2.Models
 {
-    public class Matrix
+    public class Matrix<T>
     {
-        public int[][] Values;
+        public T[][] Values;
         public int Height;
         public int Width;
 
-        public Matrix(uint width, uint height) 
+        public Matrix(int width, int height) 
         {
-            Values = new int[width][];
+            if (width < 0 || height < 0)
+                throw new Exception("Negative width ore height is impossible");
+            Values = new T[width][];
             for( int i = 0; i < height; ++i) 
-                Values[i] = new int[height];
+                Values[i] = new T[height];
             Height = (int)height;
             Width = (int)width;
         }

@@ -65,6 +65,7 @@ namespace Graphs2.Models
 
         public bool RemoveEdge( Edge edge )
         {
+            edge.RouteVert.RemoveConnectedEdge(edge);
             return Edges.Remove(edge);
         }
 
@@ -97,7 +98,7 @@ namespace Graphs2.Models
         /// <param name="start">Start vertex</param>
         /// <param name="target">Vertex to find</param>
         /// <returns>Count of edges to vert or -1 if there is no path</returns>
-        public int BreadthFistSearch( Vertex start, Vertex target)
+        public List<Vertex> BreadthFristSearch( Vertex start, Vertex target)
         {
             if (!Vertexes.Exists(x => x == start))
                 throw new Exception("Start point doesn't exist");
@@ -105,9 +106,15 @@ namespace Graphs2.Models
                 throw new Exception("Target point doesn't exist");
 
             if (start == target)
-                return 0;
+            {
+                List<Vertex> ret = new List<Vertex>();
+                ret.Add(start);
+                return ret;
+            }
 
             Queue<Vertex> vertexes = new Queue<Vertex>();
+
+            Dictionary<Vertex, Vertex> RouteVertsForVert = new Dictionary<Vertex, Vertex>();
             
             int length = 0; // Length of path (passed edges count)
 
@@ -126,17 +133,34 @@ namespace Graphs2.Models
                         ed.ConnectedVert.Visited = true; // Now it is visited
                         vertexes.Enqueue(ed.ConnectedVert); // Pushing this vertex in queue
 
+                        RouteVertsForVert.Add(ed.ConnectedVert, v);
+
                         if( ed.ConnectedVert == target) // Vertex found!
                         {
                             _clearVertexsesAfterSearch(); // Clearing vertexes visited state
-                            return length;
+
+                            List<Vertex> retList = new List<Vertex>();
+                            retList.Add(ed.ConnectedVert);
+
+                            Vertex prevVert = RouteVertsForVert[ed.ConnectedVert];
+
+                            while (prevVert != start)
+                            {
+                                retList.Add(prevVert);
+                                prevVert = RouteVertsForVert[prevVert];
+                            }
+                            
+
+                            retList.Add(prevVert);
+
+                            return retList;
                         }
                     }
                 }
             }
 
             _clearVertexsesAfterSearch(); // Clearing vertexes visited state
-            return -1; // If vertex was not found returns -1
+            return null; // If vertex was not found returns -1
         }
 
 
@@ -180,7 +204,7 @@ namespace Graphs2.Models
             return ret;
         }
 
-        public int BestFirstSearch(Vertex start, Vertex target)
+        public List<Vertex> BestFirstSearch(Vertex start, Vertex target)
         {
             if (!Vertexes.Exists(x => x == start))
                 throw new Exception("Start point doesn't exist");
@@ -188,11 +212,17 @@ namespace Graphs2.Models
                 throw new Exception("Target point doesn't exist");
 
             if (start == target)
-                return 0;
+            {
+                List<Vertex> ret = new List<Vertex>();
+                ret.Add(start);
+                return ret;
+            }
 
             bool found = false;
 
             Queue<Vertex> vertexes = new Queue<Vertex>();
+            Dictionary<Vertex, Vertex> RouteVertsForVert = new Dictionary<Vertex, Vertex>();
+
             int length = 0;
 
             start.Visited = true;
@@ -216,10 +246,26 @@ namespace Graphs2.Models
                         curvert.Visited = true;
                         vertexes.Enqueue(curvert);
 
+                        RouteVertsForVert.Add(curvert, v);
+
                         if (curvert == target)
                         {
-                            found = true;
-                            break;
+                            _clearVertexsesAfterSearch(); // Clearing vertexes visited state
+
+                            List<Vertex> retList = new List<Vertex>();
+                            retList.Add(curvert);
+
+                            Vertex prevVert = RouteVertsForVert[curvert];
+
+                            while (prevVert != start)
+                            {
+                                retList.Add(prevVert);
+                                prevVert = RouteVertsForVert[prevVert];
+                            }
+
+                            retList.Add(prevVert);
+
+                            return retList;
                         }
                     }
                 }
@@ -227,7 +273,7 @@ namespace Graphs2.Models
 
             _clearVertexsesAfterSearch();
 
-            return length;
+             return null;
         }
 
 

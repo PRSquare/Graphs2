@@ -42,7 +42,7 @@
                     <views:ObjectesListView/>
                 </ScrollViewer>
                 <Grid>
-                    <TextBlock>There will be matrix</TextBlock>
+                    <views:AdjacentyMatrixView/>
                 </Grid>
             </StackPanel>
             <Button Content="Change Position" Command="{Binding SetPositionToolCommand}"/>
