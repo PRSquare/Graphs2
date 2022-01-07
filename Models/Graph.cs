@@ -140,7 +140,7 @@ namespace Graphs2.Models
 
         // ==== 3 ====
 
-        private Vertex evristic(List<Vertex> verts) // Evtistic function to find more preferable node
+        private Vertex heuristicConnectionsCount(List<Vertex> verts) // Heuristic function to find more preferable node
         {
             if (verts.Count == 0)
                 throw new Exception("Emty vert list");
@@ -155,6 +155,26 @@ namespace Graphs2.Models
                     curConnected = vert.ConnectedEdges.Count;
                 }
             }
+            return ret;
+        }
+
+        private Vertex heuristicPathLength(List<Vertex> verts, Vertex goal)
+        {
+            if (verts.Count == 0)
+                throw new Exception("Emty vert list");
+
+            if (goal == null)
+                throw new Exception("Goal vertex is null");
+
+            Vertex ret = verts[0];
+            double curDist = Math.Abs(goal.X - ret.X) + Math.Abs(goal.Y - ret.Y);
+            foreach( var vert in verts)
+            {
+                double dist = curDist = Math.Abs(goal.X - vert.X) + Math.Abs(goal.Y - vert.Y); ;
+                if (dist < curDist)
+                    ret = vert;
+            }
+
             return ret;
         }
 
@@ -187,7 +207,7 @@ namespace Graphs2.Models
                 }
                 while(curVerts.Count > 0)
                 {
-                    Vertex curvert = evristic(curVerts);
+                    Vertex curvert = heuristicConnectionsCount(curVerts);
                     curVerts.Remove(curvert);
                     if (!curvert.Visited)
                     {

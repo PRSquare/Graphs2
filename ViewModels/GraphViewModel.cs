@@ -7,6 +7,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 
@@ -164,7 +165,24 @@ namespace Graphs2.ViewModels
 
             foreach (var edge in Edges)
                 edge.UpdateCords();
+
+            // REMOVE_LATER_showMessageBoxWithGraphInfo();
         }
+
+        // TEMP!!!!
+        private void REMOVE_LATER_showMessageBoxWithGraphInfo()
+        {
+            string buffer = "";
+            foreach (var vert in _graph.Vertexes)
+            {
+                buffer += vert.Name + ": ";
+                foreach (var ed in vert.ConnectedEdges)
+                    buffer += ed.ConnectedVert.Name + " ";
+                buffer += "\n";
+            }
+            MessageBox.Show(buffer);
+        }
+        // ========
 
         public void DeleteVertex(VertexViewModel vertex)
         {
@@ -196,6 +214,7 @@ namespace Graphs2.ViewModels
                 Edge edge = new Edge(GraphUtils.GetNewEdgeName());
                 edge.RouteVert = SelectedVertexesBuffer[0]._vert;
                 edge.ConnectedVert = SelectedVertexesBuffer[1]._vert;
+                edge.ConnectVertexes();
                 _graph.AddEdge(edge);
                 Edges = _createEdgesCollection(_graph.Edges);
                 EdgeCreationToolSelected = false;
