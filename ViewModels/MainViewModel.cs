@@ -1,6 +1,8 @@
 ﻿using Graphs2.Commands;
 using Graphs2.Models;
 using Graphs2.Stores;
+using Graphs2.Utils;
+using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,6 +27,8 @@ namespace Graphs2.ViewModels
         public ICommand RunBreadthFirstSearchCommand { get; set; }
         public ICommand RunBestFirstSearchCommand { get; set; }
         public ICommand RunDijkstrasAlgorithmCommand { get; set; }
+        
+        public ICommand ImportAdjacentyMatrixCommand { get; set; }
 
         public CanvasClickedCommand CanvasClicked { get; set; }
 
@@ -52,9 +56,14 @@ namespace Graphs2.ViewModels
 
         public MainViewModel(Graph graph, AdjacentyMatrix adjMat)
         {
+            _recreate(graph, adjMat);
+        }
+
+        private void _recreate( Graph graph, AdjacentyMatrix adjMat)
+        {
             GVM = new GraphViewModel(graph);
             AMVM = new AdjacentyMatrixViewModel(adjMat);
-            
+
             TestC = new ActionOnCommand(REMOVE_LATER_ShowGraphInfo);
 
             SetVertexCreationToolCommand = new ActionOnCommand(SetVertexCreationTool);
@@ -64,6 +73,8 @@ namespace Graphs2.ViewModels
             RunBreadthFirstSearchCommand = new ActionOnCommand(RunBreadthFirstSearch);
             RunBestFirstSearchCommand = new ActionOnCommand(RunBestFirstSearch);
             RunDijkstrasAlgorithmCommand = new ActionOnCommand(RunDijkstrasAlgorithm);
+
+            ImportAdjacentyMatrixCommand = new ActionOnCommand(CreateFromAdjacentyMatrix);
 
             GVM.UpdateSelectionInfo = UpdateSelectionInfo;
 
@@ -146,8 +157,18 @@ namespace Graphs2.ViewModels
             }
         }
 
+        public void CreateFromAdjacentyMatrix()
+        {
+            OpenFileDialog fd = new OpenFileDialog();
+            fd.Filter = "Text files (*.txt)|*.txt";
+            String fileName = "";
+            if (fd.ShowDialog() == true)
+                fileName = fd.FileName;
 
+            String buff = FileUtils.ReadFile(fileName);
 
+            _recreate(GraphUtils.ImportFromAdjacentyMatrix(buff), AMVM.AdjMat);
+        }
 
         public void REMOVE_LATER_ShowGraphInfo()
         {

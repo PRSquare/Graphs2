@@ -81,6 +81,8 @@ namespace Graphs2.Models
 
         public static bool operator ==(Vertex vert1, Vertex vert2)
         {
+            if (vert1 is null)
+                return vert2 is null;
             return vert1.Equals(vert2);
         }
         public static bool operator !=(Vertex vert1, Vertex vert2)

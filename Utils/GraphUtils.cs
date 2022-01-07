@@ -42,5 +42,47 @@ namespace Graphs2.Utils
             _edge_name_numiration = 0;
             _vert_name_numiration = 0;
         }
+
+        public static Graph ImportFromAdjacentyMatrix(string adjMat)
+        {
+            Vertex[] retGraph; // Переменная для записи графа
+            Queue<String> lines = new Queue<String>(adjMat.Split('\n')); // Строки
+
+            String line = lines.Dequeue(); // Убирание из очереди первой строки (строка с именами вершин)
+            Queue<String> names = new Queue<String>(line.Split(' ')); // Список имён вершин
+            names.Dequeue(); // Уничтожение первого (0)
+            retGraph = new Vertex[names.Count]; // Установка кол-ва вершин в графе
+            int curArrayPosition = 0; // Текущая позиция в массиве
+            foreach (var name in names)
+            {
+                // Инициализация всех вершин
+                retGraph[curArrayPosition] = new Vertex(name);
+                curArrayPosition++;
+            }
+
+            curArrayPosition = 0;
+            foreach (var l in lines)
+            {
+                // Построчное считывание строк матрицы
+                Queue<String> adjs = new Queue<String>(l.Split(' '));
+                string vertName = adjs.Dequeue(); // Имя вершины вначале строки
+                int pos = 0;
+                foreach (var adj in adjs)
+                {
+                    if (adj != "0")
+                    {
+                        // Если есть связь, то создаётся ребро
+                        Edge ge = new Edge(GetNewEdgeName(), Int32.Parse(adj));
+                        ge.ConnectVertexes(); // Добавление ребра в вершину
+                    }
+                    ++pos;
+                }
+                curArrayPosition++;
+            }
+
+            List<Vertex> vertexes = new List<Vertex>(retGraph);
+
+            return new Graph(vertexes);
+        }
     }
 }

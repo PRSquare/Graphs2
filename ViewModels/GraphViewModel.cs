@@ -253,6 +253,12 @@ namespace Graphs2.ViewModels
                 }
 
                 MultipleVertexTool = null;
+
+                string retBuff = "";
+                foreach (var vert in result)
+                    retBuff += vert.Name + "\n";
+
+                FileUtils.SaveToFile("out.txt", retBuff);
             }
         } 
 
@@ -283,6 +289,12 @@ namespace Graphs2.ViewModels
                     MessageBox.Show($"Path length between {SelectedVertexesBuffer[0].Name} and {SelectedVertexesBuffer[1].Name} equals {result.Count - 1}");
                 }
                 MultipleVertexTool = null;
+
+                string retBuff = "";
+                foreach (var vert in result)
+                    retBuff += vert.Name + "\n";
+
+                FileUtils.SaveToFile("out.txt", retBuff);
             }
         }
 
@@ -298,6 +310,8 @@ namespace Graphs2.ViewModels
                 MessageBox.Show(buffer);
 
                 MultipleVertexTool = null;
+
+                FileUtils.SaveToFile("out.txt", buffer);
             }
         }
     }

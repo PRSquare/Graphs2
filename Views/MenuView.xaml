@@ -8,7 +8,7 @@
     <Menu Name ="Menu" Grid.Row="0">
         <MenuItem Header="File">
             <MenuItem Header="Open">
-                <MenuItem Header="Adjacenty Matrix"></MenuItem>
+                <MenuItem Header="Adjacenty Matrix" Command="{Binding ImportAdjacentyMatrixCommand}"></MenuItem>
                 <MenuItem Header="Incidence Matrix"></MenuItem>
                 <MenuItem Header="Graph Code File"></MenuItem>
             </MenuItem>
