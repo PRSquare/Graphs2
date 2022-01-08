@@ -255,8 +255,9 @@ namespace Graphs2.ViewModels
                 MultipleVertexTool = null;
 
                 string retBuff = "";
-                foreach (var vert in result)
-                    retBuff += vert.Name + "\n";
+                if(!(result is null))
+                    foreach (var vert in result)
+                        retBuff += vert.Name + "\n";
 
                 FileUtils.SaveToFile("out.txt", retBuff);
             }
@@ -291,8 +292,9 @@ namespace Graphs2.ViewModels
                 MultipleVertexTool = null;
 
                 string retBuff = "";
-                foreach (var vert in result)
-                    retBuff += vert.Name + "\n";
+                if (!(result is null))
+                    foreach (var vert in result)
+                        retBuff += vert.Name + "\n";
 
                 FileUtils.SaveToFile("out.txt", retBuff);
             }

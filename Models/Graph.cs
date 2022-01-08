@@ -16,7 +16,7 @@ namespace Graphs2.Models
             Recreate(vertexes);
         }
 
-        public void Recreate( List<Vertex> vertexes ) 
+        public void Recreate(List<Vertex> vertexes)
         {
             Vertexes = new List<Vertex>();
             Edges = new List<Edge>();
@@ -29,9 +29,9 @@ namespace Graphs2.Models
             Edges = _createEdgeListWithoutUnconected(Edges, Vertexes);
         }
 
-        public bool AddVertex( Vertex vertex)
+        public bool AddVertex(Vertex vertex)
         {
-            if(!Vertexes.Exists(x => x.Name == vertex.Name))
+            if (!Vertexes.Exists(x => x.Name == vertex.Name))
             {
                 foreach (var edge in vertex.ConnectedEdges)
                 {
@@ -55,7 +55,7 @@ namespace Graphs2.Models
             return false;
         }
 
-        public bool RemoveVertex( Vertex vertex )
+        public bool RemoveVertex(Vertex vertex)
         {
             bool isSuccessfull = Vertexes.Remove(vertex);
             if (isSuccessfull)
@@ -63,13 +63,13 @@ namespace Graphs2.Models
             return isSuccessfull;
         }
 
-        public bool RemoveEdge( Edge edge )
+        public bool RemoveEdge(Edge edge)
         {
             edge.RouteVert.RemoveConnectedEdge(edge);
             return Edges.Remove(edge);
         }
 
-        private List<Edge> _createEdgeListWithoutUnconected( List<Edge> edges, List<Vertex> vertexes)
+        private List<Edge> _createEdgeListWithoutUnconected(List<Edge> edges, List<Vertex> vertexes)
         {
             List<Edge> retList = new List<Edge>();
             foreach (var edge in edges)
@@ -98,7 +98,7 @@ namespace Graphs2.Models
         /// <param name="start">Start vertex</param>
         /// <param name="target">Vertex to find</param>
         /// <returns>Count of edges to vert or -1 if there is no path</returns>
-        public List<Vertex> BreadthFristSearch( Vertex start, Vertex target)
+        public List<Vertex> BreadthFristSearch(Vertex start, Vertex target)
         {
             if (!Vertexes.Exists(x => x == start))
                 throw new Exception("Start point doesn't exist");
@@ -115,18 +115,15 @@ namespace Graphs2.Models
             Queue<Vertex> vertexes = new Queue<Vertex>();
 
             Dictionary<Vertex, Vertex> RouteVertsForVert = new Dictionary<Vertex, Vertex>();
-            
-            int length = 0; // Length of path (passed edges count)
 
             start.Visited = true; // Start vertex is visited
             vertexes.Enqueue(start); // Pushing start vertex in queue
 
-            while( vertexes.Count > 0)
+            while (vertexes.Count > 0)
             {
                 Vertex v = vertexes.Dequeue(); // Dequeueing vertex
-                length++; // Increasing path length
 
-                foreach( var ed in v.ConnectedEdges) // For each connected vertex
+                foreach (var ed in v.ConnectedEdges) // For each connected vertex
                 {
                     if (!ed.ConnectedVert.Visited) // If vertex wasn't visited
                     {
@@ -135,7 +132,7 @@ namespace Graphs2.Models
 
                         RouteVertsForVert.Add(ed.ConnectedVert, v);
 
-                        if( ed.ConnectedVert == target) // Vertex found!
+                        if (ed.ConnectedVert == target) // Vertex found!
                         {
                             _clearVertexsesAfterSearch(); // Clearing vertexes visited state
 
@@ -149,7 +146,7 @@ namespace Graphs2.Models
                                 retList.Add(prevVert);
                                 prevVert = RouteVertsForVert[prevVert];
                             }
-                            
+
 
                             retList.Add(prevVert);
 
@@ -173,9 +170,9 @@ namespace Graphs2.Models
 
             Vertex ret = verts[0]; // take first Vertex (node)
             int curConnected = ret.ConnectedEdges.Count; // count of connected edges (vertexes)
-            foreach( var vert in verts)
+            foreach (var vert in verts)
             {
-                if( vert.ConnectedEdges.Count > curConnected ) // If vertex has more connections then current take it as current
+                if (vert.ConnectedEdges.Count > curConnected) // If vertex has more connections then current take it as current
                 {
                     ret = vert;
                     curConnected = vert.ConnectedEdges.Count;
@@ -184,7 +181,7 @@ namespace Graphs2.Models
             return ret;
         }
 
-        private Vertex heuristicPathLength(List<Vertex> verts, Vertex goal)
+        /*private Vertex heuristicPathLength(List<Vertex> verts, Vertex goal)
         {
             if (verts.Count == 0)
                 throw new Exception("Emty vert list");
@@ -196,13 +193,19 @@ namespace Graphs2.Models
             double curDist = Math.Abs(goal.X - ret.X) + Math.Abs(goal.Y - ret.Y);
             foreach( var vert in verts)
             {
-                double dist = curDist = Math.Abs(goal.X - vert.X) + Math.Abs(goal.Y - vert.Y); ;
+                double dist = curDist = Math.Abs(goal.X - vert.X) + Math.Abs(goal.Y - vert.Y);
                 if (dist < curDist)
                     ret = vert;
             }
 
             return ret;
+        }*/
+
+        private double heuristicPathLength(Vertex vert1, Vertex vert2)
+        {
+            return Math.Abs(vert1.X - vert2.X) + Math.Abs(vert1.Y - vert2.Y);
         }
+
 
         public List<Vertex> BestFirstSearch(Vertex start, Vertex target)
         {
@@ -281,12 +284,12 @@ namespace Graphs2.Models
 
 
         // Class to store twos - Vert and Length for Dijksrtas algorythm
-        class dijksrtasVert : IComparable
+        class vertWithPathLength : IComparable
         {
             public Vertex Vert;
-            public int Length;
+            public double Length;
             public bool Visited => Vert.Visited;
-            public dijksrtasVert(Vertex vert, int length)
+            public vertWithPathLength(Vertex vert, double length)
             {
                 Vert = vert;
                 Length = length;
@@ -294,7 +297,7 @@ namespace Graphs2.Models
 
             public int CompareTo(object obj)
             {
-                return Length.CompareTo((obj as dijksrtasVert).Length);
+                return Length.CompareTo((obj as vertWithPathLength).Length);
             }
         }
 
@@ -309,21 +312,21 @@ namespace Graphs2.Models
                 if (edge.Weight < 0)
                     throw new Exception($"{edge.Name} has negative weight");
 
-            List<dijksrtasVert> dv = new List<dijksrtasVert>(); // Creating list of vertexes with markers (length)
+            List<vertWithPathLength> dv = new List<vertWithPathLength>(); // Creating list of vertexes with markers (length)
             foreach (var vert in Vertexes)
             {
                 if(vert == start)
-                    dv.Add(new dijksrtasVert(vert, 0)); // If start vert length = 0
+                    dv.Add(new vertWithPathLength(vert, 0)); // If start vert length = 0
                 else
-                    dv.Add(new dijksrtasVert(vert, Int32.MaxValue)); // Else it is set to infinity (maxint)
+                    dv.Add(new vertWithPathLength(vert, Int32.MaxValue)); // Else it is set to infinity (maxint)
             }
 
 
 
             while ( Vertexes.Exists( x => !x.Visited ) ) // While not all vertexes were visited
             {
-                List<dijksrtasVert> leftedList = dv.FindAll(x => !x.Visited); // List of not visited vertexes
-                dijksrtasVert cur = leftedList.Min(); // Take vertex with minimal length
+                List<vertWithPathLength> leftedList = dv.FindAll(x => !x.Visited); // List of not visited vertexes
+                vertWithPathLength cur = leftedList.Min(); // Take vertex with minimal length
                 cur.Vert.Visited = true; // It is visited now
                 foreach( Edge ed in cur.Vert.ConnectedEdges) // Finding path length to all connected vertexes 
                 {
@@ -346,8 +349,57 @@ namespace Graphs2.Models
             Dictionary<Vertex, int> retlist = new Dictionary<Vertex, int>();
             foreach( var a in dv )
                 if(a.Length != Int32.MaxValue)
-                    retlist.Add(a.Vert, a.Length);
+                    retlist.Add(a.Vert, (int)a.Length);
+
             return retlist;
+        }
+
+        public void AStar( Vertex start, Vertex target)
+        {
+            if (!Vertexes.Exists(x => x == start))
+                throw new Exception("Start point doesn't exist");
+            if (!Vertexes.Exists(x => x == target))
+                throw new Exception("Target point doesn't exist");
+
+            List<vertWithPathLength> unvisited = new List<vertWithPathLength>();
+            Dictionary<Vertex, Vertex> VertWithParent = new Dictionary<Vertex, Vertex>();
+
+            unvisited.Add(new vertWithPathLength(start, 0));
+
+            while( unvisited.Count > 0)
+            {
+                vertWithPathLength curVert = unvisited.Min();
+                unvisited.Remove(curVert);
+                curVert.Vert.Visited = true;
+                
+                foreach( var edge in curVert.Vert.ConnectedEdges)
+                {
+                    if(edge.ConnectedVert.Visited == false)
+                    {
+                        vertWithPathLength existing = unvisited.Find(x => x.Vert == edge.ConnectedVert);
+                        double length = curVert.Length + edge.Weight + heuristicPathLength(edge.ConnectedVert, target);
+                        if ( existing == null )
+                        {
+                            vertWithPathLength newVert = new vertWithPathLength(edge.ConnectedVert, length);
+                            unvisited.Add(newVert);
+                            VertWithParent.Add(newVert.Vert, curVert.Vert);
+                        }
+                        else if (existing.Length < length)
+                        {
+                            existing.Length = length;
+                            VertWithParent[existing.Vert] = curVert.Vert;
+                        }
+
+                        if(edge.ConnectedVert == target)
+                        {
+                            var a = VertWithParent;
+                            // Successs!!!!!
+                        }
+                    }
+                }
+                
+            }
+
         }
     }
 }
