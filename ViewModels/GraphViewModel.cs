@@ -372,7 +372,7 @@ namespace Graphs2.ViewModels
             }
             catch(Exception ex)
             {
-                MessageBox.Show(ex.ToString());
+                MessageBox.Show("Incorrect graph");
                 return;
             }
 
@@ -389,7 +389,16 @@ namespace Graphs2.ViewModels
                     }
                 }
             }
-            MessageBox.Show($"Radius equals {radius}.\nDiameter equals {diameter}\n{centersOut}");
+
+            string vertDegreesBuff = "";
+            foreach( var vert in Vertexes)
+            {
+                int deg = vert._vert.ConnectedEdges.Count;
+                deg += vert._vert.ConnectedEdges.FindAll(x => x.RouteVert == x.ConnectedVert).Count;
+                vertDegreesBuff += vert.Name + ": " + deg.ToString() + "\n"; 
+            }
+
+            MessageBox.Show($"Radius equals {radius}.\nDiameter equals {diameter}\n{centersOut}\n\n{vertDegreesBuff}");
         }
     }
 }
