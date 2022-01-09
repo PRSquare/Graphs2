@@ -102,5 +102,10 @@ namespace Graphs2.Models
         {
             return Weight.CompareTo((obj as Edge).Weight);
         }
+
+        public override string ToString()
+        {
+            return Weight.ToString();
+        }
     }
 }

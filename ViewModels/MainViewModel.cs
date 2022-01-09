@@ -17,7 +17,7 @@ namespace Graphs2.ViewModels
     class MainViewModel : BaseViewModel
     {
         private GraphViewModel _gvm;
-        public GraphViewModel GVM 
+        public GraphViewModel GVM
         {
             get => _gvm;
             set
@@ -28,7 +28,7 @@ namespace Graphs2.ViewModels
         }
 
         private AdjacentyMatrixViewModel _amvm;
-        public AdjacentyMatrixViewModel AMVM 
+        public AdjacentyMatrixViewModel AMVM
         {
             get => _amvm;
             set
@@ -48,6 +48,7 @@ namespace Graphs2.ViewModels
         public ICommand RunDijkstrasAlgorithmCommand { get; set; }
         public ICommand RunAStarAlgorithmCommand { get; set; }
         public ICommand RunRadDiamFinderCommand { get; set; }
+        public ICommand RunIsomorphCheckCommand { get; set;}
 
         public ICommand ImportAdjacentyMatrixCommand { get; set; }
 
@@ -75,15 +76,15 @@ namespace Graphs2.ViewModels
             }
         }
 
-        public MainViewModel(Graph graph, AdjacentyMatrix adjMat)
+        public MainViewModel(Graph graph)
         {
-            _recreate(graph, adjMat);
+            _recreate(graph);
         }
 
-        private void _recreate( Graph graph, AdjacentyMatrix adjMat)
+        private void _recreate( Graph graph)
         {
             GVM = new GraphViewModel(graph);
-            AMVM = new AdjacentyMatrixViewModel(adjMat);
+            AMVM = new AdjacentyMatrixViewModel(new AdjacentyMatrix(graph));
 
             TestC = new ActionOnCommand(REMOVE_LATER_ShowGraphInfo);
 
@@ -96,6 +97,7 @@ namespace Graphs2.ViewModels
             RunDijkstrasAlgorithmCommand = new ActionOnCommand(RunDijkstrasAlgorithm);
             RunAStarAlgorithmCommand = new ActionOnCommand(RunAStarAlgorithm);
             RunRadDiamFinderCommand = new ActionOnCommand(RunRadDiamFinder);
+            RunIsomorphCheckCommand = new ActionOnCommand(RunIsomorphCheck);
 
             ImportAdjacentyMatrixCommand = new ActionOnCommand(CreateFromAdjacentyMatrix);
 
@@ -199,6 +201,20 @@ namespace Graphs2.ViewModels
             GVM.RunFindRadDim();
         }
 
+        public void RunIsomorphCheck()
+        {
+            MessageBox.Show("Chose a file with graph adjacenty matrix");
+            OpenFileDialog fd = new OpenFileDialog();
+            fd.Filter = "Text files (*.txt)|*.txt";
+            String fileName = "";
+            if (fd.ShowDialog() == true)
+                fileName = fd.FileName;
+
+            String buff = FileUtils.ReadFile(fileName);
+
+            GVM.IsomorphCheck(GraphUtils.ImportFromAdjacentyMatrix(buff));
+        }
+
         public void CreateFromAdjacentyMatrix()
         {
             OpenFileDialog fd = new OpenFileDialog();
@@ -209,12 +225,13 @@ namespace Graphs2.ViewModels
 
             String buff = FileUtils.ReadFile(fileName);
 
-            _recreate(GraphUtils.ImportFromAdjacentyMatrix(buff), AMVM.AdjMat);
+            _recreate(GraphUtils.ImportFromAdjacentyMatrix(buff));
         }
 
         public void REMOVE_LATER_ShowGraphInfo()
         {
-            GVM.REMOVE_LATER_showMessageBoxWithGraphInfo();
+            //GVM.REMOVE_LATER_showMessageBoxWithGraphInfo();
+            MessageBox.Show(AMVM.AdjMat.ToString());
         }
     }
 }

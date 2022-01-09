@@ -325,12 +325,12 @@ namespace Graphs2.ViewModels
 
                 Dictionary<Vertex, double> result = _graph.AStar(SelectedVertexesBuffer[0]._vert, SelectedVertexesBuffer[1]._vert);
 
-                List<Vertex> res = new List<Vertex>();
-                foreach (var k in result.Keys)
-                    res.Add(k);
-
                 if (!(result is null))
                 {
+                    List<Vertex> res = new List<Vertex>();
+                    foreach (var k in result.Keys)
+                        res.Add(k);
+
                     foreach (var vert in Vertexes)
                     {
                         if (res.Exists(x => x == vert._vert))
@@ -399,6 +399,15 @@ namespace Graphs2.ViewModels
             }
 
             MessageBox.Show($"Radius equals {radius}.\nDiameter equals {diameter}\n{centersOut}\n\n{vertDegreesBuff}");
+        }
+
+        public void IsomorphCheck(Graph graph)
+        {
+            bool isIsomorph = _graph.IsIsomorphWith(graph);
+            if (isIsomorph)
+                MessageBox.Show("Graphs are isomoth");
+            else
+                MessageBox.Show("Graphs are not isomoth");
         }
     }
 }

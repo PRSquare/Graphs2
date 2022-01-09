@@ -365,7 +365,7 @@ namespace Graphs2.Models
             }
             public int ConempareTo(object obj)
             {
-                return Length.CompareTo((obj as vertWithPathLength).Length) + H.CompareTo((obj as vertWithPLAndHeuristic).H);
+                return H.CompareTo((obj as vertWithPLAndHeuristic).H);
             }
         }
 
@@ -381,13 +381,19 @@ namespace Graphs2.Models
 
             unvisited.Add(new vertWithPLAndHeuristic(start, 0, 0));
 
-            while( unvisited.Count > 0)
+            vertWithPLAndHeuristic targ = null;
+
+            while ( unvisited.Count > 0)
             {
                 vertWithPLAndHeuristic curVert = unvisited.Min();
                 unvisited.Remove(curVert);
                 curVert.Vert.Visited = true;
 
                 List<Edge> connectedEdges = new List<Edge>(curVert.Vert.ConnectedEdges);
+                
+                //
+                // Сравнивать не heuristic, а совокупность heuristic и коэфицента?? предыдущей вершины
+                //
 
                 while(connectedEdges.Count > 0)
                 {
@@ -402,19 +408,23 @@ namespace Graphs2.Models
                     if (!obsVert.Visited)
                     {
                         vertWithPLAndHeuristic v = unvisited.Find(x => x.Vert == obsVert);
-                        vertWithPLAndHeuristic newVert = new vertWithPLAndHeuristic(obsVert, Length, h);
+                        vertWithPLAndHeuristic newVert = v is null ? new vertWithPLAndHeuristic(obsVert, Length, h) : v;
                         if (v is null)
                         {
                             unvisited.Add(newVert);
                             VertWithParent.Add(newVert, curVert);
                         }
-                        else if ( v.H > h)
+                        if ( h < newVert.H )
                         {
-                            v.H = h; v.Length = Length;
-                            VertWithParent[v] = curVert;
+                            newVert.H = h; newVert.Length = Length;
+                            VertWithParent[newVert] = curVert;
                         }
 
-                        if (obsVert == target)
+                        if(obsVert == target)
+                        {
+                            targ = newVert;
+                        }
+                        /*if (obsVert == target)
                         {
                             Dictionary<Vertex, double> retDict = new Dictionary<Vertex, double>();
                             retDict.Add(newVert.Vert, newVert.Length);
@@ -433,14 +443,39 @@ namespace Graphs2.Models
                             _clearVertexsesAfterSearch();
 
                             return retDict;
-                        }
+                        }*/
                     }
                 }
                 
             }
+
             _clearVertexsesAfterSearch();
 
-            return null;
+            if (targ == null)
+                return null;
+            else
+            {
+                Dictionary<Vertex, double> retDict = new Dictionary<Vertex, double>();
+                retDict.Add(targ.Vert, targ.H);
+
+                vertWithPLAndHeuristic rootVert = VertWithParent[targ];
+
+                var a = VertWithParent;
+
+                while (rootVert.Vert != start)
+                {
+                    retDict.Add(rootVert.Vert, rootVert.H);
+                    rootVert = VertWithParent[rootVert];
+                }
+                retDict.Add(rootVert.Vert, rootVert.H);
+
+                _clearVertexsesAfterSearch();
+
+                return retDict;
+            }
+            
+
+            //return null;
         }
 
         public Vertex[] RadDimFinder(out int radius, out int diameter)
@@ -489,6 +524,54 @@ namespace Graphs2.Models
 
             return ret;
 
+        }
+
+        public bool IsIsomorphWith(Graph graph)
+        {
+            AdjacentyMatrix first = new AdjacentyMatrix(this);
+            AdjacentyMatrix second = new AdjacentyMatrix(graph);
+
+            if (first.Size != second.Size)
+                return false;
+
+            int size = first.Size;
+
+            List<string> firstStrings = new List<string>();
+            List<string> secondStrings = new List<string>();
+
+
+            for( int i = 0; i < size; ++i)
+            {
+                firstStrings.Add(first.GetRowAsStringWithoutWeighs(i));
+                secondStrings.Add(second.GetRowAsStringWithoutWeighs(i));
+            }
+
+            firstStrings.Sort(); secondStrings.Sort();
+            bool iso = true;
+            for(int i = 0; i < size; ++i)
+            {
+                iso = iso && firstStrings[i] == secondStrings[i];
+                if (!iso)
+                    break;
+            }
+
+
+            return iso;
+        }
+
+        public bool IsConnected()
+        {
+            int distCount = -1;
+            foreach (var vertex in Vertexes)
+            {
+                Dictionary<Vertex, int> curLenDist = DijkstrasAlgorithm(vertex);
+                if (distCount == -1)
+                    distCount = curLenDist.Count;
+
+                if (curLenDist.Count != distCount)
+                    return true;
+            }
+            return false;
         }
     }
 }

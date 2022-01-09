@@ -24,6 +24,7 @@
             <MenuItem Header="Dijkstras Algorythm" Command="{Binding RunDijkstrasAlgorithmCommand}"/>
             <MenuItem Header="AStar Algorythm" Command="{Binding RunAStarAlgorithmCommand}"/>
             <MenuItem Header="Find Radius and Diameter" Command="{Binding RunRadDiamFinderCommand}"/>
+            <MenuItem Header="Isomorphism checking" Command="{Binding RunIsomorphCheckCommand}"/>
         </MenuItem>
         <MenuItem Header="?">
             <MenuItem Header="О программе"></MenuItem>

@@ -34,7 +34,20 @@ namespace Graphs2.Models
                 }
             }
         }
-        
+
+        public Edge[] GetRow(int i) => Mat.GetRow(i);
+        public string GetRowAsString(int i) => Mat.GetRowAsString(i);
+        public string GetRowAsStringWithoutWeighs( int i)
+        {
+            string buff = Mat.GetRowAsString(i);
+            string[] str = buff.Split(' ');
+            for (int j = 0; j < str.Length; ++j)
+                if (str[j] != "0")
+                    str[j] = "1";
+            return String.Join(" ", str);
+        }
+
+
         public void SetValue(int weight, int i, int j)
         {
             if (i >= Mat.Width || j >= Mat.Height || i < 0 || j < 0)
@@ -66,5 +79,10 @@ namespace Graphs2.Models
 
         public Edge At(int i, int j) => Mat.Values[i][j];
         public int Size => Mat.Width;
+
+        public override string ToString()
+        {
+            return Mat.ToString();
+        }
     }
 }
