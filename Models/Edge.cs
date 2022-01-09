@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Graphs2.Models
 {
-    public class Edge : ICloneable
+    public class Edge : ICloneable, IComparable
     {
         public Vertex RouteVert;
         public Vertex ConnectedVert;
@@ -96,6 +96,11 @@ namespace Graphs2.Models
             hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Name);
             hashCode = hashCode * -1521134295 + IsDirected.GetHashCode();
             return hashCode;
+        }
+
+        public int CompareTo(object obj)
+        {
+            return Weight.CompareTo((obj as Edge).Weight);
         }
     }
 }

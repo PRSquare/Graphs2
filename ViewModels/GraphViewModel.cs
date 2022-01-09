@@ -108,7 +108,7 @@ namespace Graphs2.ViewModels
             SelectedEdgesBuffer = new EdgeViewModel[2] { null, null };
         }
 
-        private void _writeInBuffer( VertexViewModel vertex)
+        private void _writeInBuffer(VertexViewModel vertex)
         {
             SelectedVertexesBuffer[0] = SelectedVertexesBuffer[1];
             SelectedVertexesBuffer[1] = vertex;
@@ -125,7 +125,7 @@ namespace Graphs2.ViewModels
             _disableOtherSelection(obj);
             SelectedObject = obj;
             _writeInBuffer(obj);
-            if(MultipleVertexTool != null)
+            if (MultipleVertexTool != null)
             {
                 MultipleVertexTool();
             }
@@ -140,7 +140,7 @@ namespace Graphs2.ViewModels
             SelectedObject = obj;
             _writeInBuffer(obj);
             LastSelected = lastSelected.edge;
-            
+
             UpdateSelectionInfo();
         }
 
@@ -213,7 +213,7 @@ namespace Graphs2.ViewModels
 
         public void CreateEdge()
         {
-            if(SelectedVertexesBuffer[0] != null && SelectedVertexesBuffer[1] != null)
+            if (SelectedVertexesBuffer[0] != null && SelectedVertexesBuffer[1] != null)
             {
                 Edge edge = new Edge(GraphUtils.GetNewEdgeName());
                 edge.RouteVert = SelectedVertexesBuffer[0]._vert;
@@ -255,13 +255,13 @@ namespace Graphs2.ViewModels
                 MultipleVertexTool = null;
 
                 string retBuff = "";
-                if(!(result is null))
+                if (!(result is null))
                     foreach (var vert in result)
                         retBuff += vert.Name + "\n";
 
                 FileUtils.SaveToFile("out.txt", retBuff);
             }
-        } 
+        }
 
         public void RunBestFirstSearch()
         {
@@ -315,6 +315,81 @@ namespace Graphs2.ViewModels
 
                 FileUtils.SaveToFile("out.txt", buffer);
             }
+        }
+
+        public void RunAStar()
+        {
+            if (SelectedVertexesBuffer[0] != null && SelectedVertexesBuffer[1] != null)
+            {
+                DisableSelection();
+
+                Dictionary<Vertex, double> result = _graph.AStar(SelectedVertexesBuffer[0]._vert, SelectedVertexesBuffer[1]._vert);
+
+                List<Vertex> res = new List<Vertex>();
+                foreach (var k in result.Keys)
+                    res.Add(k);
+
+                if (!(result is null))
+                {
+                    foreach (var vert in Vertexes)
+                    {
+                        if (res.Exists(x => x == vert._vert))
+                            vert.ObjectColor = new SolidColorBrush(Colors.Green);
+                    }
+                    for (int i = 0; i < res.Count - 1; ++i)
+                    {
+                        Edge fEdge = res[i + 1].ConnectedEdges.Find(x => x.ConnectedVert == res[i]);
+                        foreach (var ed in Edges)
+                        {
+                            if (ed._edge == fEdge)
+                                ed.ObjectColor = new SolidColorBrush(Colors.Green);
+                        }
+                    }
+
+                    string buffer = "Path lengths: \n";
+                    foreach (var d in result)
+                        buffer += d.Key.Name + ": " + d.Value.ToString() + "\n";
+                    MessageBox.Show($"Path lenhth between {SelectedVertexesBuffer[0].Name} and {SelectedVertexesBuffer[1].Name} equals {result.First().Value}\n{buffer}");
+                    FileUtils.SaveToFile("out.txt", buffer);
+                }
+                else
+                {
+                    MessageBox.Show($"There is no path between {SelectedVertexesBuffer[0].Name} and {SelectedVertexesBuffer[1].Name}");
+                }
+
+                MultipleVertexTool = null;
+
+            }
+        }
+
+        public void RunFindRadDim()
+        {
+            Vertex[] result;
+            int radius; int diameter;
+            try
+            {
+                result = _graph.RadDimFinder(out radius, out diameter);
+            }
+            catch(Exception ex)
+            {
+                MessageBox.Show(ex.ToString());
+                return;
+            }
+
+            string centersOut = "Centers: ";
+            for( int i = 0; i < result.Length; ++i )
+            {
+                centersOut += result[i].Name + " ";
+                foreach( var v in Vertexes)
+                {
+                    if (v._vert == result[i])
+                    {
+                        v.ObjectColor = new SolidColorBrush(Colors.Blue);
+                        break;
+                    }
+                }
+            }
+            MessageBox.Show($"Radius equals {radius}.\nDiameter equals {diameter}\n{centersOut}");
         }
     }
 }

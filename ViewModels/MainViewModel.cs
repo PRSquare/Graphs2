@@ -16,8 +16,27 @@ namespace Graphs2.ViewModels
 {
     class MainViewModel : BaseViewModel
     {
-        public GraphViewModel GVM { get; set; }
-        public AdjacentyMatrixViewModel AMVM { get; set; }
+        private GraphViewModel _gvm;
+        public GraphViewModel GVM 
+        {
+            get => _gvm;
+            set
+            {
+                _gvm = value;
+                OnPropertyChanged(nameof(GVM));
+            }
+        }
+
+        private AdjacentyMatrixViewModel _amvm;
+        public AdjacentyMatrixViewModel AMVM 
+        {
+            get => _amvm;
+            set
+            {
+                _amvm = value;
+                OnPropertyChanged(nameof(AMVM));
+            }
+        }
 
         public ICommand TestC { get; set; }
         public ICommand SetPositionToolCommand { get; set; }
@@ -27,7 +46,9 @@ namespace Graphs2.ViewModels
         public ICommand RunBreadthFirstSearchCommand { get; set; }
         public ICommand RunBestFirstSearchCommand { get; set; }
         public ICommand RunDijkstrasAlgorithmCommand { get; set; }
-        
+        public ICommand RunAStarAlgorithmCommand { get; set; }
+        public ICommand RunRadDiamFinderCommand { get; set; }
+
         public ICommand ImportAdjacentyMatrixCommand { get; set; }
 
         public CanvasClickedCommand CanvasClicked { get; set; }
@@ -73,6 +94,8 @@ namespace Graphs2.ViewModels
             RunBreadthFirstSearchCommand = new ActionOnCommand(RunBreadthFirstSearch);
             RunBestFirstSearchCommand = new ActionOnCommand(RunBestFirstSearch);
             RunDijkstrasAlgorithmCommand = new ActionOnCommand(RunDijkstrasAlgorithm);
+            RunAStarAlgorithmCommand = new ActionOnCommand(RunAStarAlgorithm);
+            RunRadDiamFinderCommand = new ActionOnCommand(RunRadDiamFinder);
 
             ImportAdjacentyMatrixCommand = new ActionOnCommand(CreateFromAdjacentyMatrix);
 
@@ -155,6 +178,25 @@ namespace Graphs2.ViewModels
             {
                 MessageBox.Show("Some another tool is already in use");
             }
+        }
+
+        public void RunAStarAlgorithm()
+        {
+            if (GVM.MultipleVertexTool == null)
+            {
+                MessageBox.Show("Select two vertexes please");
+                GVM.ResetSelectedVertexesBuffer();
+                GVM.MultipleVertexTool = GVM.RunAStar;
+            }
+            else
+            {
+                MessageBox.Show("Some another tool is already in use");
+            }
+        }
+
+        public void RunRadDiamFinder()
+        {
+            GVM.RunFindRadDim();
         }
 
         public void CreateFromAdjacentyMatrix()

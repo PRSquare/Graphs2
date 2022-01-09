@@ -354,51 +354,140 @@ namespace Graphs2.Models
             return retlist;
         }
 
-        public void AStar( Vertex start, Vertex target)
+        // 5
+
+        class vertWithPLAndHeuristic : vertWithPathLength, IComparable
+        {
+            public double H;
+            public vertWithPLAndHeuristic(Vertex vert, double pl, double h) : base(vert, pl)
+            {
+                H = h;
+            }
+            public int ConempareTo(object obj)
+            {
+                return Length.CompareTo((obj as vertWithPathLength).Length) + H.CompareTo((obj as vertWithPLAndHeuristic).H);
+            }
+        }
+
+        public Dictionary<Vertex, double> AStar( Vertex start, Vertex target)
         {
             if (!Vertexes.Exists(x => x == start))
                 throw new Exception("Start point doesn't exist");
             if (!Vertexes.Exists(x => x == target))
                 throw new Exception("Target point doesn't exist");
 
-            List<vertWithPathLength> unvisited = new List<vertWithPathLength>();
-            Dictionary<Vertex, Vertex> VertWithParent = new Dictionary<Vertex, Vertex>();
+            List<vertWithPLAndHeuristic> unvisited = new List<vertWithPLAndHeuristic>();
+            Dictionary<vertWithPLAndHeuristic, vertWithPLAndHeuristic> VertWithParent = new Dictionary<vertWithPLAndHeuristic, vertWithPLAndHeuristic>();
 
-            unvisited.Add(new vertWithPathLength(start, 0));
+            unvisited.Add(new vertWithPLAndHeuristic(start, 0, 0));
 
             while( unvisited.Count > 0)
             {
-                vertWithPathLength curVert = unvisited.Min();
+                vertWithPLAndHeuristic curVert = unvisited.Min();
                 unvisited.Remove(curVert);
                 curVert.Vert.Visited = true;
-                
-                foreach( var edge in curVert.Vert.ConnectedEdges)
+
+                List<Edge> connectedEdges = new List<Edge>(curVert.Vert.ConnectedEdges);
+
+                while(connectedEdges.Count > 0)
                 {
-                    if(edge.ConnectedVert.Visited == false)
+                    var e = connectedEdges.Min();
+                    connectedEdges.Remove(e);
+                    
+                    var obsVert = e.ConnectedVert;
+
+                    double Length = curVert.Length + e.Weight;
+                    double h = heuristicPathLength(obsVert, target);
+
+                    if (!obsVert.Visited)
                     {
-                        vertWithPathLength existing = unvisited.Find(x => x.Vert == edge.ConnectedVert);
-                        double length = curVert.Length + edge.Weight + heuristicPathLength(edge.ConnectedVert, target);
-                        if ( existing == null )
+                        vertWithPLAndHeuristic v = unvisited.Find(x => x.Vert == obsVert);
+                        vertWithPLAndHeuristic newVert = new vertWithPLAndHeuristic(obsVert, Length, h);
+                        if (v is null)
                         {
-                            vertWithPathLength newVert = new vertWithPathLength(edge.ConnectedVert, length);
                             unvisited.Add(newVert);
-                            VertWithParent.Add(newVert.Vert, curVert.Vert);
+                            VertWithParent.Add(newVert, curVert);
                         }
-                        else if (existing.Length < length)
+                        else if ( v.H > h)
                         {
-                            existing.Length = length;
-                            VertWithParent[existing.Vert] = curVert.Vert;
+                            v.H = h; v.Length = Length;
+                            VertWithParent[v] = curVert;
                         }
 
-                        if(edge.ConnectedVert == target)
+                        if (obsVert == target)
                         {
+                            Dictionary<Vertex, double> retDict = new Dictionary<Vertex, double>();
+                            retDict.Add(newVert.Vert, newVert.Length);
+
+                            vertWithPLAndHeuristic rootVert = VertWithParent[newVert];
+
                             var a = VertWithParent;
-                            // Successs!!!!!
+
+                            while (rootVert.Vert != start)
+                            {
+                                retDict.Add(rootVert.Vert, rootVert.Length);
+                                rootVert = VertWithParent[rootVert];
+                            }
+                            retDict.Add(rootVert.Vert, rootVert.Length);
+
+                            _clearVertexsesAfterSearch();
+
+                            return retDict;
                         }
                     }
                 }
                 
             }
+            _clearVertexsesAfterSearch();
+
+            return null;
+        }
+
+        public Vertex[] RadDimFinder(out int radius, out int diameter)
+        {
+            List<vertWithPathLength> lenDict = new List<vertWithPathLength>();
+            int tempDist = -1;
+            int curMax = 0;
+            int curMin = Int32.MaxValue;
+            foreach (var vertex in Vertexes)
+            {
+                Dictionary<Vertex, int> curLenDist = DijkstrasAlgorithm(vertex);
+                if (tempDist == -1)
+                    tempDist = curLenDist.Count;
+
+                if (curLenDist.Count != tempDist)
+                    throw new Exception("Unsolid graph");
+
+                int allLength = 0;
+                foreach (var l in curLenDist.Values)
+                    if (l > allLength)
+                        allLength = l;
+
+                if (allLength < curMin)
+                    curMin = allLength;
+                if (allLength > curMax)
+                    curMax = allLength;
+
+                lenDict.Add(new vertWithPathLength(vertex, allLength));
+            }
+
+            radius = curMin; diameter = curMax;
+
+            List<vertWithPathLength> centers = lenDict.FindAll(x => x.Length == curMin);
+            //List<vertWithPathLength> diams = lenDict.FindAll(x => x.Length == curMax);
+
+            List<Vertex> retRads = new List<Vertex>();
+            List<Vertex> retDiams = new List<Vertex>();
+
+            foreach (var r in centers)
+                retRads.Add(r.Vert);
+            //foreach (var d in diams)
+            //    retDiams.Add(d.Vert);
+
+            Vertex[] ret = retRads.ToArray();
+            //ret[0] = retRads.ToArray(); ret[1] = retDiams.ToArray();
+
+            return ret;
 
         }
     }

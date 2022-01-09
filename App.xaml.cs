@@ -62,13 +62,7 @@ namespace Graphs2
 
             GraphUtils.SetAutoVertexesPositions(MyGraph);
 
-            Dictionary<Vertex, int> test1 = MyGraph.DijkstrasAlgorithm(vert1);
-
-            MyGraph.AStar(vert1, vert3);
-
-            string buffer = "";
-            foreach ( var d in test1)
-                buffer += d.Key.Name + " " + d.Value.ToString() + "\n";
+            //MyGraph.AStar(vert1, vert3);
 
             //MessageBox.Show($"{buffer}");
 

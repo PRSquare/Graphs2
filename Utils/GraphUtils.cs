@@ -73,6 +73,8 @@ namespace Graphs2.Utils
                     {
                         // Если есть связь, то создаётся ребро
                         Edge ge = new Edge(GetNewEdgeName(), Int32.Parse(adj));
+                        ge.RouteVert = retGraph[curArrayPosition];
+                        ge.ConnectedVert = retGraph[pos];
                         ge.ConnectVertexes(); // Добавление ребра в вершину
                     }
                     ++pos;
@@ -80,9 +82,10 @@ namespace Graphs2.Utils
                 curArrayPosition++;
             }
 
-            List<Vertex> vertexes = new List<Vertex>(retGraph);
+            Graph g = new Graph(new List<Vertex>(retGraph));
+            SetAutoVertexesPositions(g);
 
-            return new Graph(vertexes);
+            return g;
         }
     }
 }

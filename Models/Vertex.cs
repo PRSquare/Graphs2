@@ -40,6 +40,8 @@ namespace Graphs2.Models
             retVert.X = X;
             retVert.Y = Y;
 
+            retVert.ConnectedEdges = this.ConnectedEdges;
+
             // ConnectedEdges
 
             return retVert;
