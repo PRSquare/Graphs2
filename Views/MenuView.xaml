@@ -25,6 +25,7 @@
             <MenuItem Header="AStar Algorythm" Command="{Binding RunAStarAlgorithmCommand}"/>
             <MenuItem Header="Find Radius and Diameter" Command="{Binding RunRadDiamFinderCommand}"/>
             <MenuItem Header="Isomorphism checking" Command="{Binding RunIsomorphCheckCommand}"/>
+            <MenuItem Header="Connection checking" Command="{Binding RunConnectionCheckCommand}"/>
         </MenuItem>
         <MenuItem Header="?">
             <MenuItem Header="О программе"></MenuItem>

@@ -49,6 +49,7 @@ namespace Graphs2.ViewModels
         public ICommand RunAStarAlgorithmCommand { get; set; }
         public ICommand RunRadDiamFinderCommand { get; set; }
         public ICommand RunIsomorphCheckCommand { get; set;}
+        public ICommand RunConnectionCheckCommand { get; set; }
 
         public ICommand ImportAdjacentyMatrixCommand { get; set; }
 
@@ -98,6 +99,7 @@ namespace Graphs2.ViewModels
             RunAStarAlgorithmCommand = new ActionOnCommand(RunAStarAlgorithm);
             RunRadDiamFinderCommand = new ActionOnCommand(RunRadDiamFinder);
             RunIsomorphCheckCommand = new ActionOnCommand(RunIsomorphCheck);
+            RunConnectionCheckCommand = new ActionOnCommand(RunConnectionCheck);
 
             ImportAdjacentyMatrixCommand = new ActionOnCommand(CreateFromAdjacentyMatrix);
 
@@ -215,6 +217,11 @@ namespace Graphs2.ViewModels
             GVM.IsomorphCheck(GraphUtils.ImportFromAdjacentyMatrix(buff));
         }
 
+        public void RunConnectionCheck()
+        {
+            GVM.ConnectionCheck();
+        }
+
         public void CreateFromAdjacentyMatrix()
         {
             OpenFileDialog fd = new OpenFileDialog();
@@ -230,8 +237,8 @@ namespace Graphs2.ViewModels
 
         public void REMOVE_LATER_ShowGraphInfo()
         {
-            //GVM.REMOVE_LATER_showMessageBoxWithGraphInfo();
-            MessageBox.Show(AMVM.AdjMat.ToString());
+            GVM.REMOVE_LATER_showMessageBoxWithGraphInfo();
+            //MessageBox.Show(AMVM.AdjMat.ToString());
         }
     }
 }

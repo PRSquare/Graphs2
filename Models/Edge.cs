@@ -58,7 +58,15 @@ namespace Graphs2.Models
         public bool IsOposite( Edge edge)
         {
             return RouteVert.Equals(edge.ConnectedVert) && ConnectedVert.Equals(edge.RouteVert) &&
-                Weight == edge.Weight && !IsDirected;
+                Weight == edge.Weight;
+        }
+
+        public Edge GetOposite()
+        {
+            Edge newEdge = new Edge(Name, Weight);
+            newEdge.RouteVert = ConnectedVert;
+            newEdge.ConnectedVert = RouteVert;
+            return newEdge;
         }
 
         public override bool Equals(object obj)

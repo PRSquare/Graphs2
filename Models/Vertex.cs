@@ -40,9 +40,24 @@ namespace Graphs2.Models
             retVert.X = X;
             retVert.Y = Y;
 
-            retVert.ConnectedEdges = this.ConnectedEdges;
+            foreach( var ed in ConnectedEdges)
+            {
+                Edge newEdge = new Edge(ed.Name, ed.Weight);
+                newEdge.RouteVert = this;
+                newEdge.RouteVert = ed.ConnectedVert;
+                retVert.AddConnectedEdge(newEdge);
+            }
 
             // ConnectedEdges
+
+            return retVert;
+        }
+
+        public object CloneWithoutEdges()
+        {
+            Vertex retVert = new Vertex(Name);
+            retVert.X = X;
+            retVert.Y = Y;
 
             return retVert;
         }
@@ -63,6 +78,7 @@ namespace Graphs2.Models
             }
             return existing;
         }
+
         /// <summary>
         /// Removes edge from connected edges
         /// </summary>

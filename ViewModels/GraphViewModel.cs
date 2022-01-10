@@ -181,7 +181,7 @@ namespace Graphs2.ViewModels
             {
                 buffer += vert.Name + ": ";
                 foreach (var ed in vert.ConnectedEdges)
-                    buffer += ed.ConnectedVert.Name + " ";
+                    buffer += "\t" + ed.ConnectedVert.Name + "(" + (ed.IsDirected == true ? "Directed" : "Not directed") + ")\n";
                 buffer += "\n";
             }
             MessageBox.Show(buffer);
@@ -230,7 +230,7 @@ namespace Graphs2.ViewModels
             if (SelectedVertexesBuffer[0] != null && SelectedVertexesBuffer[1] != null)
             {
                 DisableSelection();
-                List<Vertex> result = _graph.BreadthFristSearch(SelectedVertexesBuffer[0]._vert, SelectedVertexesBuffer[1]._vert);
+                List<Vertex> result = GraphAlgorythms.BreadthFristSearch(_graph, SelectedVertexesBuffer[0]._vert, SelectedVertexesBuffer[1]._vert);
                 if (result == null)
                     MessageBox.Show($"There is no path between {SelectedVertexesBuffer[0].Name} and {SelectedVertexesBuffer[1].Name}");
                 else
@@ -268,7 +268,7 @@ namespace Graphs2.ViewModels
             if (SelectedVertexesBuffer[0] != null && SelectedVertexesBuffer[1] != null)
             {
                 DisableSelection();
-                List<Vertex> result = _graph.BestFirstSearch(SelectedVertexesBuffer[0]._vert, SelectedVertexesBuffer[1]._vert);
+                List<Vertex> result = GraphAlgorythms.BestFirstSearch(_graph, SelectedVertexesBuffer[0]._vert, SelectedVertexesBuffer[1]._vert);
                 if (result == null)
                     MessageBox.Show($"There is no path between {SelectedVertexesBuffer[0].Name} and {SelectedVertexesBuffer[1].Name}");
                 else
@@ -305,7 +305,7 @@ namespace Graphs2.ViewModels
             if (SelectedVertexesBuffer[1] != null)
             {
                 DisableSelection();
-                Dictionary<Vertex, int> result = _graph.DijkstrasAlgorithm(SelectedVertexesBuffer[1]._vert);
+                Dictionary<Vertex, int> result = GraphAlgorythms.DijkstrasAlgorithm(_graph, SelectedVertexesBuffer[1]._vert);
                 string buffer = "Path lengths: \n";
                 foreach (var d in result)
                     buffer += d.Key.Name + ": " + d.Value.ToString() + "\n";
@@ -323,7 +323,7 @@ namespace Graphs2.ViewModels
             {
                 DisableSelection();
 
-                Dictionary<Vertex, double> result = _graph.AStar(SelectedVertexesBuffer[0]._vert, SelectedVertexesBuffer[1]._vert);
+                Dictionary<Vertex, double> result = GraphAlgorythms.AStar(_graph, SelectedVertexesBuffer[0]._vert, SelectedVertexesBuffer[1]._vert);
 
                 if (!(result is null))
                 {
@@ -368,7 +368,7 @@ namespace Graphs2.ViewModels
             int radius; int diameter;
             try
             {
-                result = _graph.RadDimFinder(out radius, out diameter);
+                result = GraphAlgorythms.RadDimFinder(_graph, out radius, out diameter);
             }
             catch(Exception ex)
             {
@@ -403,11 +403,40 @@ namespace Graphs2.ViewModels
 
         public void IsomorphCheck(Graph graph)
         {
-            bool isIsomorph = _graph.IsIsomorphWith(graph);
+            bool isIsomorph = GraphAlgorythms.IsIsomorphWith(_graph, graph);
             if (isIsomorph)
                 MessageBox.Show("Graphs are isomoth");
             else
                 MessageBox.Show("Graphs are not isomoth");
+        }
+
+        public void ConnectionCheck()
+        {
+            bool isStrongConnection;
+            List<List<Vertex>> components;
+            bool isConnected = GraphAlgorythms.IsConnected(_graph, out isStrongConnection, out components);
+            int compCount;
+            string compElsBuff = null;
+            if( !(components is null))
+            {
+                compCount = components.Count;
+                compElsBuff = $"Connection components count: {compCount}\n";
+
+                int n = 0;
+                int first = 0;
+                foreach (var comp in components)
+                {
+                    compElsBuff += $"{n++}:\n";
+                    foreach (var c in comp)
+                        compElsBuff += $"{(first++ == 0 ? "" : ", ")}{c.Name}";
+                    first = 0;
+                    compElsBuff += "\n";
+                }
+            }
+            if (isConnected)
+                MessageBox.Show($"Graph is connected. Connectrion is {(isStrongConnection ? "strong" : "weak")}\n{(compElsBuff is null ? "" : compElsBuff)}");
+            else
+                MessageBox.Show($"Graph is not connected\n{(compElsBuff is null ? "" : compElsBuff)}");
         }
     }
 }
