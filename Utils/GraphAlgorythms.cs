@@ -563,10 +563,122 @@ namespace Graphs2.Utils
             return _componentCount(newG);
         }
 
-        public static bool IsConnected(Graph graph, out bool IsStrongConnection, out List<List<Vertex>> compCount)
+        class vertWithNumberAndLow
+        {
+            public int N; 
+            public int Low = -1;
+            public List<vertWithNumberAndLow> Ch = new List<vertWithNumberAndLow>();
+            
+            public Vertex _vert;
+
+            public bool Visited
+            {
+                get => _vert.Visited;
+                set { _vert.Visited = value; }
+            }
+
+            public List<Edge> ConnectedEdges
+            {
+                get => _vert.ConnectedEdges;
+            }
+
+            public vertWithNumberAndLow(Vertex vert, int n)
+            {
+                _vert = vert;
+                N = n;
+            }
+
+            public bool Equals(Vertex obj)
+            {
+                if (obj is null)
+                    return this is null;
+                return _vert.Name.Equals(obj.Name);
+            }
+
+            public bool Equals(vertWithNumberAndLow obj)
+            {
+                if (obj is null)
+                    return this is null;
+                return _vert.Name.Equals(obj._vert.Name);
+            }
+
+        }
+
+        private static List<vertWithNumberAndLow> _dfsNumeration(List<vertWithNumberAndLow> vertlist, Vertex vert, out vertWithNumberAndLow addedVert)
+        {
+            List<vertWithNumberAndLow> retList = vertlist;
+            int n = 1;
+            foreach (var v in vertlist)
+                if (v.N >= n)
+                    n = v.N + 1;
+
+            vertWithNumberAndLow newVert = new vertWithNumberAndLow(vert, n);
+            newVert.Visited = true;
+            addedVert = newVert;
+            retList.Add(newVert);
+
+            foreach (var ed in newVert.ConnectedEdges)
+            {
+                var conVert = ed.ConnectedVert;
+                if (!conVert.Visited)
+                {
+                    vertWithNumberAndLow added;
+                    retList.AddRange(_dfsNumeration(retList, conVert, out added));
+                    newVert.Ch.Add(added);
+                }
+            }
+            int minLow = Int32.MaxValue;
+            int minN = Int32.MaxValue;
+
+            var rltest = retList;
+
+            foreach (var v in newVert.Ch)
+                if (v.Low < minLow)
+                    minLow = v.Low;
+            List<vertWithNumberAndLow> allConnected = new List<vertWithNumberAndLow>();
+            foreach( var ed in newVert.ConnectedEdges)
+                allConnected.Add(retList.Find(x => x.Equals(ed.ConnectedVert)));
+            
+            foreach (var v in allConnected)
+                if (v.N < minN)
+                    minN = v.N;
+
+            newVert.Low = Math.Min(minLow, minN);
+
+            return retList;
+
+        }
+
+        private static List<Vertex> _articulationPointsSearch( Graph graph)
+        {
+            List<Vertex> retList = new List<Vertex>();
+            Vertex unvisited = graph.Vertexes.Find(x => x.Visited == false);
+            while(!(unvisited is null))
+            {
+                List<vertWithNumberAndLow> answerList = new List<vertWithNumberAndLow>();
+                vertWithNumberAndLow firstVert;
+                answerList = _dfsNumeration(answerList, unvisited, out firstVert);
+                foreach( var v in answerList)
+                {
+                    int targN = v.Low;
+                    Vertex addVert = answerList.Find(x => x.N == targN)._vert;
+                    if (!retList.Contains(addVert))
+                        retList.Add(addVert);
+                }
+                unvisited = graph.Vertexes.Find(x => x.Visited == false);
+            }
+
+            graph._clearVertexsesAfterSearch();
+
+            return retList;
+        }
+
+        public static bool IsConnected(Graph graph, out bool IsStrongConnection, out List<List<Vertex>> compCount, out List<Vertex> articulationPoints)
         {
             bool isOriented = false;
             IsStrongConnection = true;
+
+            articulationPoints = null;
 
             Graph g = graph.Clone() as Graph;
 
@@ -609,6 +721,9 @@ namespace Graphs2.Utils
                     return _isCon(g, allConnectedGraph.Vertexes);
                 }
             }
+
+            articulationPoints = _articulationPointsSearch(g);
+
             compCount = _componentCount(g);
             return _isCon(g, g.Vertexes);
         }

@@ -414,7 +414,8 @@ namespace Graphs2.ViewModels
         {
             bool isStrongConnection;
             List<List<Vertex>> components;
-            bool isConnected = GraphAlgorythms.IsConnected(_graph, out isStrongConnection, out components);
+            List<Vertex> articPoints;
+            bool isConnected = GraphAlgorythms.IsConnected(_graph, out isStrongConnection, out components, out articPoints);
             int compCount;
             string compElsBuff = null;
             if( !(components is null))
@@ -433,8 +434,18 @@ namespace Graphs2.ViewModels
                     compElsBuff += "\n";
                 }
             }
+
+            string artPointsBuff = null;
+            if(!(articPoints is null))
+            {
+                artPointsBuff = "Articulation points:\n";
+                int first = 0;
+                foreach( var p in articPoints)
+                    artPointsBuff += $"{(first++ == 0 ? "" : ", ")}{p.Name}";
+            }
+
             if (isConnected)
-                MessageBox.Show($"Graph is connected. Connectrion is {(isStrongConnection ? "strong" : "weak")}\n{(compElsBuff is null ? "" : compElsBuff)}");
+                MessageBox.Show($"Graph is connected. Connectrion is {(isStrongConnection ? "strong" : "weak")}\n{(compElsBuff is null ? "" : compElsBuff)} {(artPointsBuff is null ? "" : artPointsBuff)}");
             else
                 MessageBox.Show($"Graph is not connected\n{(compElsBuff is null ? "" : compElsBuff)}");
         }

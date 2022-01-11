@@ -34,6 +34,14 @@ namespace Graphs2.Models
             Name = name;
         }
 
+        public Vertex(Vertex vert)
+        {
+            X = vert.X; Y = vert.Y;
+            Name = vert.Name;
+            ConnectedEdges = vert.ConnectedEdges;
+            Visited = vert.Visited;
+        }
+
         public object Clone()
         {
             Vertex retVert = new Vertex(Name);
