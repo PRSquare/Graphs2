@@ -465,5 +465,10 @@ namespace Graphs2.ViewModels
             _graph.MakeEdgesWeightEqualsLength();
             
         }
+
+        public void SaveToGraphCodeFile(string filename)
+        {
+            GraphUtils.SaveGraphCodeFile(filename, _graph);
+        }
     }
 }

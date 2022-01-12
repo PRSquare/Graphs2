@@ -54,6 +54,9 @@ namespace Graphs2.ViewModels
         public ICommand RunConnectionCheckCommand { get; set; }
 
         public ICommand ImportAdjacentyMatrixCommand { get; set; }
+        public ICommand CreateFromGraphCodeFileCommand { get; set; }
+
+        public ICommand SaveToGraphCodeFileCommand { get; set; }
 
         public CanvasClickedCommand CanvasClicked { get; set; }
 
@@ -106,6 +109,9 @@ namespace Graphs2.ViewModels
             RunConnectionCheckCommand = new ActionOnCommand(RunConnectionCheck);
 
             ImportAdjacentyMatrixCommand = new ActionOnCommand(CreateFromAdjacentyMatrix);
+            CreateFromGraphCodeFileCommand = new ActionOnCommand(CreateFromGraphCodeFile);
+
+            SaveToGraphCodeFileCommand = new ActionOnCommand(SaveToGraphCodeFile);
 
             GVM.UpdateSelectionInfo = UpdateSelectionInfo;
 
@@ -237,6 +243,31 @@ namespace Graphs2.ViewModels
             String buff = FileUtils.ReadFile(fileName);
 
             _recreate(GraphUtils.ImportFromAdjacentyMatrix(buff));
+        }
+
+        public void CreateFromGraphCodeFile()
+        {
+            OpenFileDialog fd = new OpenFileDialog();
+            fd.Filter = "Text files (*.txt)|*.txt";
+            String fileName = "";
+            if (fd.ShowDialog() == true)
+                fileName = fd.FileName;
+
+            String buff = FileUtils.ReadFile(fileName);
+
+            _recreate(GraphUtils.CreateGraphGromEdgVertList(buff));
+        }
+
+        public void SaveToGraphCodeFile()
+        {
+            OpenFileDialog fd = new OpenFileDialog();
+            fd.Filter = "Text files (*.txt)|*.txt";
+            String fileName = "";
+            if (fd.ShowDialog() == true)
+                fileName = fd.FileName;
+
+            if(fileName != "" && !(fileName is null))
+                GVM.SaveToGraphCodeFile(fileName);
         }
 
         public void MakeEdgesWeightEqualsLength()

@@ -10,12 +10,12 @@
             <MenuItem Header="Open">
                 <MenuItem Header="Adjacenty Matrix" Command="{Binding ImportAdjacentyMatrixCommand}"></MenuItem>
                 <MenuItem Header="Incidence Matrix"></MenuItem>
-                <MenuItem Header="Graph Code File"></MenuItem>
+                <MenuItem Header="Graph Code File" Command="{Binding CreateFromGraphCodeFileCommand}"></MenuItem>
             </MenuItem>
             <MenuItem Header="Save">
                 <MenuItem Header="As Adjacenty Matrix"></MenuItem>
                 <!--<MenuItem Header="As Incidence Matrix"></MenuItem>-->
-                <MenuItem Header="As Graph Code File"></MenuItem>
+                <MenuItem Header="As Graph Code File" Command="{Binding SaveToGraphCodeFileCommand}"></MenuItem>
             </MenuItem>
         </MenuItem>
         <MenuItem Header="Задачи теории графов">
