@@ -17,14 +17,12 @@ namespace Graphs2.ViewModels
     {
         public Edge _edge;
 
-        private string _name;
         public string Name
         {
-            get => _name;
+            get => _edge.Name;
             set
             {
-                _name = value;
-                _edge.Name = Name;
+                _edge.Name = value;
                 OnPropertyChanged(nameof(Name));
             }
         }
@@ -70,14 +68,12 @@ namespace Graphs2.ViewModels
             set { _isDirected = value; _edge.IsDirected = IsDirected; OnPropertyChanged(nameof(IsDirected)); } 
         }
 
-        private int _weight;
         public int Weight
         {
-            get => _weight;
+            get => _edge.Weight;
             set
             {
-                _weight = value;
-                _edge.Weight = Weight;
+                _edge.Weight = value;
                 OnPropertyChanged(nameof(Weight));
             } 
         }

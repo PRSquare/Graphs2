@@ -31,5 +31,8 @@
             <MenuItem Header="О программе"></MenuItem>
             <MenuItem Header="Об авторе"></MenuItem>
         </MenuItem>
+        <MenuItem Header="Special tools">
+            <MenuItem Header="Make Edges Weight Equals Length" Command="{Binding MakeEdgesWeightEqualsLengthCommand}"/>
+        </MenuItem>
     </Menu>
 </UserControl>

@@ -459,5 +459,11 @@ namespace Graphs2.ViewModels
             else
                 MessageBox.Show($"Graph is not connected\n{(compElsBuff is null ? "" : compElsBuff)}\n\n{(bridgesBuff is null ? "" : bridgesBuff)}");
         }
+
+        public void MakeEdgesWeightEqualsLength()
+        {
+            _graph.MakeEdgesWeightEqualsLength();
+            
+        }
     }
 }

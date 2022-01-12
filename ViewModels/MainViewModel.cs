@@ -43,6 +43,8 @@ namespace Graphs2.ViewModels
         public ICommand SetVertexCreationToolCommand { get; set; }
         public ICommand SetEdgeCreationToolCommand { get; set; }
 
+        public ICommand MakeEdgesWeightEqualsLengthCommand { get; set; }
+
         public ICommand RunBreadthFirstSearchCommand { get; set; }
         public ICommand RunBestFirstSearchCommand { get; set; }
         public ICommand RunDijkstrasAlgorithmCommand { get; set; }
@@ -92,6 +94,8 @@ namespace Graphs2.ViewModels
             SetVertexCreationToolCommand = new ActionOnCommand(SetVertexCreationTool);
             SetPositionToolCommand = new ActionOnCommand(SetPositionTool);
             SetEdgeCreationToolCommand = new ActionOnCommand(SetEdgeCreationTool);
+
+            MakeEdgesWeightEqualsLengthCommand = new ActionOnCommand(MakeEdgesWeightEqualsLength);
 
             RunBreadthFirstSearchCommand = new ActionOnCommand(RunBreadthFirstSearch);
             RunBestFirstSearchCommand = new ActionOnCommand(RunBestFirstSearch);
@@ -233,6 +237,11 @@ namespace Graphs2.ViewModels
             String buff = FileUtils.ReadFile(fileName);
 
             _recreate(GraphUtils.ImportFromAdjacentyMatrix(buff));
+        }
+
+        public void MakeEdgesWeightEqualsLength()
+        {
+            GVM.MakeEdgesWeightEqualsLength();
         }
 
         public void REMOVE_LATER_ShowGraphInfo()

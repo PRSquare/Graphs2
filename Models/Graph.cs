@@ -108,7 +108,7 @@ namespace Graphs2.Models
         public object Clone()
         {
             List<Vertex> verts = new List<Vertex>();
-            foreach( var ed in Edges)
+            foreach (var ed in Edges)
             {
                 Vertex v1 = verts.Find(x => x.Name == ed.RouteVert.Name);
                 Vertex v2 = verts.Find(x => x.Name == ed.ConnectedVert.Name);
@@ -128,6 +128,16 @@ namespace Graphs2.Models
                 edge.ConnectVertexes();
             }
             return new Graph(verts);
+        }
+
+        public void MakeEdgesWeightEqualsLength()
+        {
+            foreach( var ed in Edges)
+            {
+                double xl = ed.ConnectedVert.X - ed.RouteVert.X;
+                double yl = ed.ConnectedVert.Y - ed.RouteVert.Y;
+                ed.Weight = (int) Math.Sqrt(xl * xl + yl * yl);
+            }
         }
         
     }

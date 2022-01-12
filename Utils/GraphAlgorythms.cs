@@ -122,11 +122,6 @@ namespace Graphs2.Utils
             return ret;
         }*/
 
-        private static double heuristicPathLength(Vertex vert1, Vertex vert2)
-        {
-            return Math.Abs(vert1.X - vert2.X) + Math.Abs(vert1.Y - vert2.Y);
-        }
-
 
         public static List<Vertex> BestFirstSearch(Graph graph, Vertex start, Vertex target)
         {
@@ -275,7 +270,10 @@ namespace Graphs2.Utils
             return retlist;
         }
 
-        // 5
+        // ===== 5 ======
+
+        private static double heuristicPathLength(Vertex vert1, Vertex vert2) =>
+            Math.Sqrt((vert1.X - vert2.X) * (vert1.X - vert2.X) + (vert1.Y - vert2.Y) * (vert1.Y - vert2.Y));
 
         class vertWithPLAndHeuristic : vertWithPathLength, IComparable
         {
@@ -286,7 +284,7 @@ namespace Graphs2.Utils
             }
             public int ConempareTo(object obj)
             {
-                return H.CompareTo((obj as vertWithPLAndHeuristic).H);
+                return H.CompareTo((obj as vertWithPLAndHeuristic).H) + Length.CompareTo((obj as vertWithPLAndHeuristic).Length);
             }
         }
 
@@ -302,8 +300,6 @@ namespace Graphs2.Utils
 
             unvisited.Add(new vertWithPLAndHeuristic(start, 0, 0));
 
-            vertWithPLAndHeuristic targ = null;
-
             while (unvisited.Count > 0)
             {
                 vertWithPLAndHeuristic curVert = unvisited.Min();
@@ -312,59 +308,49 @@ namespace Graphs2.Utils
 
                 List<Edge> connectedEdges = new List<Edge>(curVert.Vert.ConnectedEdges);
 
-                //
-                // Сравнивать не heuristic, а совокупность heuristic и коэфицента?? предыдущей вершины
-                //
-
                 while (connectedEdges.Count > 0)
                 {
-                    var e = connectedEdges.Min();
+                    var e = connectedEdges.Min(); // Picking edge with the less weight
                     connectedEdges.Remove(e);
 
-                    var obsVert = e.ConnectedVert;
+                    Vertex obsVert = e.ConnectedVert; // Taking vertex on the end of this edge
 
-                    double Length = curVert.Length + e.Weight;
+                    double Length = curVert.Length + e.Weight; 
                     double h = heuristicPathLength(obsVert, target);
 
                     if (!obsVert.Visited)
                     {
                         vertWithPLAndHeuristic v = unvisited.Find(x => x.Vert == obsVert);
-                        vertWithPLAndHeuristic newVert = v is null ? new vertWithPLAndHeuristic(obsVert, Length, h) : v;
+                        vertWithPLAndHeuristic newVert = new vertWithPLAndHeuristic(obsVert, Length, h);
+                        vertWithPLAndHeuristic existingVert = v is null ? newVert : v;
                         if (v is null)
                         {
-                            unvisited.Add(newVert);
-                            VertWithParent.Add(newVert, curVert);
+                            unvisited.Add(existingVert);
+                            VertWithParent.Add(existingVert, curVert);
                         }
-                        if (h < newVert.H)
+                        if (newVert.CompareTo(existingVert) < 0)
                         {
-                            newVert.H = h; newVert.Length = Length;
-                            VertWithParent[newVert] = curVert;
+                            existingVert.H = h; existingVert.Length = Length;
+                            VertWithParent[existingVert] = curVert;
                         }
 
                         if (obsVert == target)
                         {
-                            targ = newVert;
-                        }
-                        /*if (obsVert == target)
-                        {
                             Dictionary<Vertex, double> retDict = new Dictionary<Vertex, double>();
-                            retDict.Add(newVert.Vert, newVert.Length);
-
-                            vertWithPLAndHeuristic rootVert = VertWithParent[newVert];
-
+                            retDict.Add(obsVert, existingVert.H);
+                            vertWithPLAndHeuristic rootVert = VertWithParent[existingVert];
                             var a = VertWithParent;
-
                             while (rootVert.Vert != start)
                             {
-                                retDict.Add(rootVert.Vert, rootVert.Length);
+                                retDict.Add(rootVert.Vert, rootVert.H);
                                 rootVert = VertWithParent[rootVert];
                             }
-                            retDict.Add(rootVert.Vert, rootVert.Length);
+                            retDict.Add(rootVert.Vert, rootVert.H);
 
-                            _clearVertexsesAfterSearch();
+                            graph._clearVertexsesAfterSearch();
 
                             return retDict;
-                        }*/
+                        }
                     }
                 }
 
@@ -372,30 +358,7 @@ namespace Graphs2.Utils
 
             graph._clearVertexsesAfterSearch();
 
-            if (targ == null)
-                return null;
-            else
-            {
-                Dictionary<Vertex, double> retDict = new Dictionary<Vertex, double>();
-                retDict.Add(targ.Vert, targ.H);
-
-                vertWithPLAndHeuristic rootVert = VertWithParent[targ];
-
-                var a = VertWithParent;
-
-                while (rootVert.Vert != start)
-                {
-                    retDict.Add(rootVert.Vert, rootVert.H);
-                    rootVert = VertWithParent[rootVert];
-                }
-                retDict.Add(rootVert.Vert, rootVert.H);
-
-                graph._clearVertexsesAfterSearch();
-
-                return retDict;
-            }
-
-
+            return null;
             //return null;
         }
 
