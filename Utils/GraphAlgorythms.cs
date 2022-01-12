@@ -616,14 +616,15 @@ namespace Graphs2.Utils
             newVert.Visited = true;
             addedVert = newVert;
             retList.Add(newVert);
-
+            
             foreach (var ed in newVert.ConnectedEdges)
             {
                 var conVert = ed.ConnectedVert;
                 if (!conVert.Visited)
                 {
                     vertWithNumberAndLow added;
-                    retList.AddRange(_dfsNumeration(retList, conVert, out added));
+                    //retList.AddRange(_dfsNumeration(retList, conVert, out added));
+                    _dfsNumeration(retList, conVert, out added);
                     newVert.Ch.Add(added);
                 }
             }
@@ -645,6 +646,9 @@ namespace Graphs2.Utils
 
             newVert.Low = Math.Min(minLow, minN);
 
+            if(n == 1 && newVert.Ch.Count < 2)
+                retList.Remove(newVert);
+
             return retList;
 
         }
@@ -658,12 +662,17 @@ namespace Graphs2.Utils
                 List<vertWithNumberAndLow> answerList = new List<vertWithNumberAndLow>();
                 vertWithNumberAndLow firstVert;
                 answerList = _dfsNumeration(answerList, unvisited, out firstVert);
-                foreach( var v in answerList)
+                if(!(answerList is null))
                 {
-                    int targN = v.Low;
-                    Vertex addVert = answerList.Find(x => x.N == targN)._vert;
-                    if (!retList.Contains(addVert))
-                        retList.Add(addVert);
+                    foreach (var v in answerList)
+                    {
+                        int targN = v.Low;
+                        vertWithNumberAndLow addVert = answerList.Find(x => x.N == targN);
+                        if(!(addVert is null))
+                            if (!retList.Contains(addVert._vert))
+                                retList.Add(addVert._vert);
+
+                    }
                 }
                 unvisited = graph.Vertexes.Find(x => x.Visited == false);
             }
@@ -673,12 +682,41 @@ namespace Graphs2.Utils
             return retList;
         }
 
-        public static bool IsConnected(Graph graph, out bool IsStrongConnection, out List<List<Vertex>> compCount, out List<Vertex> articulationPoints)
+        private static List<Edge> _bridgesSearch( List<Vertex> articulationPoints)
+        {
+            List<Edge> bridges = new List<Edge>();
+            foreach (var vert in articulationPoints)
+            {
+                foreach (var ed in vert.ConnectedEdges)
+                {
+                    if (ed.ConnectedVert.ConnectedEdges.Count == 0)
+                    {
+                        bridges.Add(ed);
+                        continue;
+                    }
+                    if ( ed.ConnectedVert.ConnectedEdges.Count == 1 && ed.ConnectedVert.ConnectedEdges.Exists(x => x.ConnectedVert == vert))
+                    {
+                        bridges.Add(ed);
+                        bridges.Add(ed.ConnectedVert.ConnectedEdges[0]);
+                        continue;
+                    }
+                    if (articulationPoints.Contains(ed.ConnectedVert))
+                    {
+                        bridges.Add(ed);
+                        continue;
+                    }
+                }
+            }
+            return bridges;
+        }
+
+        public static bool IsConnected(Graph graph, out bool IsStrongConnection, out List<List<Vertex>> compCount, out List<Vertex> articulationPoints, out List<Edge> bridges)
         {
             bool isOriented = false;
             IsStrongConnection = true;
 
             articulationPoints = null;
+            bridges = null;
 
             Graph g = graph.Clone() as Graph;
 
@@ -723,6 +761,7 @@ namespace Graphs2.Utils
             }
 
             articulationPoints = _articulationPointsSearch(g);
+            bridges = _bridgesSearch(articulationPoints);
 
             compCount = _componentCount(g);
             return _isCon(g, g.Vertexes);

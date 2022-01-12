@@ -415,10 +415,11 @@ namespace Graphs2.ViewModels
             bool isStrongConnection;
             List<List<Vertex>> components;
             List<Vertex> articPoints;
-            bool isConnected = GraphAlgorythms.IsConnected(_graph, out isStrongConnection, out components, out articPoints);
+            List<Edge> bridges;
+            bool isConnected = GraphAlgorythms.IsConnected(_graph, out isStrongConnection, out components, out articPoints, out bridges);
             int compCount;
             string compElsBuff = null;
-            if( !(components is null))
+            if( !(components is null) && components.Count > 0)
             {
                 compCount = components.Count;
                 compElsBuff = $"Connection components count: {compCount}\n";
@@ -436,7 +437,7 @@ namespace Graphs2.ViewModels
             }
 
             string artPointsBuff = null;
-            if(!(articPoints is null))
+            if(!(articPoints is null) && articPoints.Count > 0)
             {
                 artPointsBuff = "Articulation points:\n";
                 int first = 0;
@@ -444,10 +445,19 @@ namespace Graphs2.ViewModels
                     artPointsBuff += $"{(first++ == 0 ? "" : ", ")}{p.Name}";
             }
 
+            string bridgesBuff = null;
+            if(!(bridges is null) && bridges.Count > 0)
+            {
+                bridgesBuff = "Bridges:\n";
+                int first = 0;
+                foreach (var b in bridges)
+                    bridgesBuff += $"{(first++ == 0 ? "" : ",\n")}{b.RouteVert.Name} => {b.ConnectedVert.Name}";
+            }
+
             if (isConnected)
-                MessageBox.Show($"Graph is connected. Connectrion is {(isStrongConnection ? "strong" : "weak")}\n{(compElsBuff is null ? "" : compElsBuff)} {(artPointsBuff is null ? "" : artPointsBuff)}");
+                MessageBox.Show($"Graph is connected. Connectrion is {(isStrongConnection ? "strong" : "weak")}\n\n{(compElsBuff is null ? "" : compElsBuff)}\n{(artPointsBuff is null ? "" : artPointsBuff)}\n\n{(bridgesBuff is null ? "" : bridgesBuff)}");
             else
-                MessageBox.Show($"Graph is not connected\n{(compElsBuff is null ? "" : compElsBuff)}");
+                MessageBox.Show($"Graph is not connected\n{(compElsBuff is null ? "" : compElsBuff)}\n\n{(bridgesBuff is null ? "" : bridgesBuff)}");
         }
     }
 }
