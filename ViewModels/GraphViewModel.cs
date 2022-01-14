@@ -460,6 +460,22 @@ namespace Graphs2.ViewModels
                 MessageBox.Show($"Graph is not connected\n{(compElsBuff is null ? "" : compElsBuff)}\n\n{(bridgesBuff is null ? "" : bridgesBuff)}");
         }
 
+
+        public void IsCompleteGraph()
+        {
+            AdjacentyMatrix graphComplement;
+            bool isComplete = GraphAlgorythms.IsCompleteGraph(_graph, out graphComplement);
+            if (isComplete)
+            {
+                MessageBox.Show($"Graph is complete");
+            }
+            else
+            {
+                MessageBox.Show($"Graph is not complete.\nComplement:\n{graphComplement.ToString()}");
+                FileUtils.SaveToFile("graphComplement.txt", graphComplement.ToString());
+            }
+        }
+
         public void MakeEdgesWeightEqualsLength()
         {
             _graph.MakeEdgesWeightEqualsLength();

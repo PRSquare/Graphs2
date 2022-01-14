@@ -52,6 +52,7 @@ namespace Graphs2.ViewModels
         public ICommand RunRadDiamFinderCommand { get; set; }
         public ICommand RunIsomorphCheckCommand { get; set;}
         public ICommand RunConnectionCheckCommand { get; set; }
+        public ICommand CompleteCheckCommand { get; set; }
 
         public ICommand ImportAdjacentyMatrixCommand { get; set; }
         public ICommand CreateFromGraphCodeFileCommand { get; set; }
@@ -107,6 +108,7 @@ namespace Graphs2.ViewModels
             RunRadDiamFinderCommand = new ActionOnCommand(RunRadDiamFinder);
             RunIsomorphCheckCommand = new ActionOnCommand(RunIsomorphCheck);
             RunConnectionCheckCommand = new ActionOnCommand(RunConnectionCheck);
+            CompleteCheckCommand = new ActionOnCommand(CompleteCheck);
 
             ImportAdjacentyMatrixCommand = new ActionOnCommand(CreateFromAdjacentyMatrix);
             CreateFromGraphCodeFileCommand = new ActionOnCommand(CreateFromGraphCodeFile);
@@ -273,6 +275,11 @@ namespace Graphs2.ViewModels
         public void MakeEdgesWeightEqualsLength()
         {
             GVM.MakeEdgesWeightEqualsLength();
+        }
+
+        public void CompleteCheck()
+        {
+            GVM.IsCompleteGraph();
         }
 
         public void REMOVE_LATER_ShowGraphInfo()

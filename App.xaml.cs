@@ -60,6 +60,10 @@ namespace Graphs2
 
             AdjacentyMatrix mymat = new AdjacentyMatrix(MyGraph);
 
+            MessageBox.Show(new AdjacentyMatrix(Graph.CreateConnected(MyGraph)).ToString());
+            MessageBox.Show(mymat.ToString());
+            MessageBox.Show(AdjacentyMatrix.And(new AdjacentyMatrix(Graph.CreateConnected(MyGraph)), mymat).ToString());
+
             GraphUtils.SetAutoVertexesPositions(MyGraph);
 
             //MyGraph.AStar(vert1, vert3);

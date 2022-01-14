@@ -132,13 +132,51 @@ namespace Graphs2.Models
 
         public void MakeEdgesWeightEqualsLength()
         {
-            foreach( var ed in Edges)
+            foreach (var ed in Edges)
             {
                 double xl = ed.ConnectedVert.X - ed.RouteVert.X;
                 double yl = ed.ConnectedVert.Y - ed.RouteVert.Y;
-                ed.Weight = (int) Math.Sqrt(xl * xl + yl * yl);
+                ed.Weight = (int)Math.Sqrt(xl * xl + yl * yl);
             }
         }
-        
+
+        public static Graph CreateNotConnected(int count)
+        {
+            List<Vertex> verts = new List<Vertex>();
+            for (int i = 0; i < count; ++i)
+                verts.Add(new Vertex($"Vertex_{i}"));
+            return new Graph(verts);
+        }
+        public static Graph CreateNotConnected(Graph graph)
+        {
+            return CreateNotConnected(graph.Vertexes);
+        }
+        public static Graph CreateNotConnected(List<Vertex> allverts)
+        {
+            List<Vertex> verts = new List<Vertex>();
+            foreach (var v in allverts)
+                verts.Add(new Vertex(v.Name));
+            return new Graph(verts);
+        }
+
+        public static Graph CreateConnected(Graph graph)
+        {
+            Graph thisGraph = Graph.CreateNotConnected(graph);
+            foreach(var vert1 in thisGraph.Vertexes)
+            {
+                foreach(var vert2 in thisGraph.Vertexes)
+                {
+                    if(vert1 != vert2)
+                    {
+                        Edge ed = new Edge();
+                        ed.RouteVert = vert1;
+                        ed.ConnectedVert = vert2;
+                        ed.ConnectVertexes();
+                        thisGraph.AddEdge(ed);
+                    }
+                }
+            }
+            return thisGraph;
+        }
     }
 }

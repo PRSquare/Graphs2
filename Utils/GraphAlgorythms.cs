@@ -729,5 +729,12 @@ namespace Graphs2.Utils
             compCount = _componentCount(g);
             return _isCon(g, g.Vertexes);
         }
+
+        public static bool IsCompleteGraph(Graph graph, out AdjacentyMatrix graphComplement)
+        {
+            AdjacentyMatrix graphMat = new AdjacentyMatrix(graph);
+            graphComplement = AdjacentyMatrix.Not(AdjacentyMatrix.And(graphMat, new AdjacentyMatrix(Graph.CreateConnected(graph))));
+            return graphComplement.IsNull();
+        }
     }
 }
